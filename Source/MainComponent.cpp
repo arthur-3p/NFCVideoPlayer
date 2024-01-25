@@ -10,6 +10,8 @@ MainComponent::MainComponent()
     videoComp.load(videoFile);
     
     setSize (600, 400);
+    
+    startTimer(100);
 }
 
 MainComponent::~MainComponent()
@@ -33,4 +35,21 @@ void MainComponent::resized()
     // If you add any child components, this is where you should
     // update their positions.
     videoComp.setBounds(getLocalBounds());
+}
+
+void MainComponent::timerCallback()
+{
+    auto readers = pcsc_cpp::listReaders();
+    for (const auto& reader : readers)
+    {
+        DBG(reader.statusString());
+        if (reader.isCardInserted())
+        {
+            auto uidCom = pcsc_cpp::CommandApdu('\xFF', '\xCA', '\x00', '\x00');
+            auto card = reader.connectToCard();
+            
+            auto transactionGuard = card->beginTransaction();
+            auto response = card->transmit(uidCom);
+        }
+    }
 }

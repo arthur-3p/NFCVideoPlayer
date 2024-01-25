@@ -1,3 +1,0 @@
-set ( LIBLOGICALACCESS_VERSION_MAJOR  "@majorversion@" )
-set ( LIBLOGICALACCESS_VERSION_MINOR  "@minorversion@" )
-set ( LIBLOGICALACCESS_VERSION_PATCH  "@incrementalversion@" )

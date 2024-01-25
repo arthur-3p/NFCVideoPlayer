@@ -3,6 +3,23 @@
 <JUCERPROJECT id="RPi3v6" name="NFCVideoPlayer" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="sWsS7L" name="NFCVideoPlayer">
+    <GROUP id="{865A61C3-1A5B-7CD3-05A2-D86AC8E25030}" name="libpcsc">
+      <FILE id="QucCJS" name="comp_winscard.hpp" compile="0" resource="0"
+            file="libpcsc/comp_winscard.hpp"/>
+      <FILE id="pKe25F" name="Context.hpp" compile="0" resource="0" file="libpcsc/Context.hpp"/>
+      <FILE id="tcaFHy" name="flag_set.hpp" compile="0" resource="0" file="libpcsc/flag_set.hpp"/>
+      <FILE id="w2VmhT" name="LICENSE" compile="0" resource="1" file="libpcsc/LICENSE"/>
+      <FILE id="tkmnzg" name="listReaders.cpp" compile="1" resource="0" file="libpcsc/listReaders.cpp"/>
+      <FILE id="quASs5" name="magic_enum.hpp" compile="0" resource="0" file="libpcsc/magic_enum.hpp"/>
+      <FILE id="xvxcXn" name="pcsc-cpp-utils.hpp" compile="0" resource="0"
+            file="libpcsc/pcsc-cpp-utils.hpp"/>
+      <FILE id="z3C5hm" name="pcsc-cpp.hpp" compile="0" resource="0" file="libpcsc/pcsc-cpp.hpp"/>
+      <FILE id="VF32xy" name="Reader.cpp" compile="1" resource="0" file="libpcsc/Reader.cpp"/>
+      <FILE id="OELODh" name="README.md" compile="0" resource="1" file="libpcsc/README.md"/>
+      <FILE id="ZZSMIy" name="SCardCall.hpp" compile="0" resource="0" file="libpcsc/SCardCall.hpp"/>
+      <FILE id="hs8sqY" name="SmartCard.cpp" compile="1" resource="0" file="libpcsc/SmartCard.cpp"/>
+      <FILE id="Y4lLoo" name="utils.cpp" compile="1" resource="0" file="libpcsc/utils.cpp"/>
+    </GROUP>
     <GROUP id="{255B26D5-F173-74EF-91A0-58B2F4C0DE5A}" name="Source">
       <FILE id="wucq3U" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="pUkecK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
@@ -21,7 +38,7 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX">
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraLinkerFlags="-framework PCSC">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="NFCVideoPlayer"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="NFCVideoPlayer"/>
