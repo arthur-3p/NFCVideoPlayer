@@ -1,0 +1,23 @@
+remove_definitions(-DLIBLOGICALACCESS_EXPORTS_DLL)
+
+if (MSVC)
+	remove_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
+endif()
+
+add_subdirectory(iso7816)
+
+if (NOT ANDROID)
+add_subdirectory(deister)
+add_subdirectory(elatec)
+add_subdirectory(gunnebo)
+if (LLA_BUILD_LIBUSB)
+	add_subdirectory(libusb)
+endif()
+add_subdirectory(ok5553)
+add_subdirectory(osdp)
+add_subdirectory(pcsc)
+add_subdirectory(stidstr)
+	if(MSVC)
+		add_subdirectory(keyboard)
+	endif()
+endif()
