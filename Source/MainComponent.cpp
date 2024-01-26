@@ -37,6 +37,18 @@ void MainComponent::resized()
     videoComp.setBounds(getLocalBounds());
 }
 
+inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
+{
+    std::ostringstream hexStringBuilder;
+
+    hexStringBuilder << std::setfill('0') << std::hex;
+
+    for (const auto byte : bytes)
+        hexStringBuilder << std::setw(2) << short(byte);
+
+    return hexStringBuilder.str();
+}
+
 void MainComponent::timerCallback()
 {
     auto readers = pcsc_cpp::listReaders();
@@ -45,11 +57,19 @@ void MainComponent::timerCallback()
         DBG(reader.statusString());
         if (reader.isCardInserted())
         {
-            auto uidCom = pcsc_cpp::CommandApdu('\xFF', '\xCA', '\x00', '\x00');
+            // request UID from NFC
+            auto uidCom = pcsc_cpp::CommandApdu(0xFF, 0xCA, 0x00, 0x00, {}, 0x00);
             auto card = reader.connectToCard();
             
             auto transactionGuard = card->beginTransaction();
             auto response = card->transmit(uidCom);
+            
+            if (response.isOK())
+            {
+                // print UID
+                auto bytes = response.data;
+                DBG(bytes2hexstr(bytes));
+            }
         }
     }
 }
