@@ -6,11 +6,9 @@ MainComponent::MainComponent()
 {
     addAndMakeVisible(videoComp);
     
-    juce::File videoFile = juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDesktopDirectory).getChildFile("testVideo.mov");
-    videoComp.load(videoFile);
+    loadVideos();
     
     setSize (600, 400);
-    
     startTimer(100);
 }
 
@@ -29,6 +27,7 @@ void MainComponent::resized()
     videoComp.setBounds(getLocalBounds());
 }
 
+//==============================================================================
 void MainComponent::timerCallback()
 {
     auto readers = pcsc_cpp::listReaders();
@@ -37,6 +36,26 @@ void MainComponent::timerCallback()
         if (reader.isCardInserted())
             cardInserted(reader);
     }
+}
+
+//==============================================================================
+void MainComponent::loadVideos()
+{
+    juce::File videoFile = juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDesktopDirectory).getChildFile("testVideo.mov");
+    videoComp.load(videoFile);
+}
+
+//==============================================================================
+inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
+{
+    std::ostringstream hexStringBuilder;
+
+    hexStringBuilder << std::setfill('0') << std::hex;
+
+    for (const auto byte : bytes)
+        hexStringBuilder << std::setw(2) << short(byte);
+
+    return hexStringBuilder.str();
 }
 
 void MainComponent::cardInserted(pcsc_cpp::Reader reader)
@@ -53,19 +72,6 @@ void MainComponent::cardInserted(pcsc_cpp::Reader reader)
         DBG("error with insertion");
     }
 }
-
-inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
-{
-    std::ostringstream hexStringBuilder;
-
-    hexStringBuilder << std::setfill('0') << std::hex;
-
-    for (const auto byte : bytes)
-        hexStringBuilder << std::setw(2) << short(byte);
-
-    return hexStringBuilder.str();
-}
-
 
 juce::String MainComponent::getNFCUID(pcsc_cpp::SmartCard::ptr card)
 {
@@ -92,13 +98,7 @@ juce::String MainComponent::getNFCUID(pcsc_cpp::SmartCard::ptr card)
 
 void MainComponent::UIDtoVideo(juce::String UID)
 {
-    DBG(UID);
-    
-    if (UID == "")
-    {
-        DBG("UID Empty");
-        return;
-    }
+    if (UID == "") return;
     
     if (UID != currentUID)
     {
