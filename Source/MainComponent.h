@@ -23,10 +23,14 @@ public:
     void timerCallback() override;
 
 private:
-    //==============================================================================
-    // Your private member variables go here...
-
+    void cardInserted(pcsc_cpp::Reader reader);
+    juce::String getNFCUID(pcsc_cpp::SmartCard::ptr card);
+    void UIDtoVideo(juce::String UID);
+    
     juce::VideoComponent videoComp;
+    juce::String currentUID = "";
+    
+    pcsc_cpp::CommandApdu UIDcommand{0xFF, 0xCA, 0x00, 0x00, {}, 0x00};
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

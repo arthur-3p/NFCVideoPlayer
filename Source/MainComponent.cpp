@@ -21,20 +21,37 @@ MainComponent::~MainComponent()
 //==============================================================================
 void MainComponent::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setFont (juce::Font (16.0f));
-    g.setColour (juce::Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), juce::Justification::centred, true);
+    g.fillAll (juce::Colours::black);
 }
 
 void MainComponent::resized()
 {
-    // This is called when the MainComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
     videoComp.setBounds(getLocalBounds());
+}
+
+void MainComponent::timerCallback()
+{
+    auto readers = pcsc_cpp::listReaders();
+    for (const auto& reader : readers)
+    {
+        if (reader.isCardInserted())
+            cardInserted(reader);
+    }
+}
+
+void MainComponent::cardInserted(pcsc_cpp::Reader reader)
+{
+    auto card = reader.connectToCard();
+    juce::String uid = getNFCUID(std::move(card));
+    
+    try
+    {
+        UIDtoVideo(uid);
+    }
+    catch (...)
+    {
+        DBG("error with insertion");
+    }
 }
 
 inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
@@ -49,27 +66,49 @@ inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
     return hexStringBuilder.str();
 }
 
-void MainComponent::timerCallback()
+
+juce::String MainComponent::getNFCUID(pcsc_cpp::SmartCard::ptr card)
 {
-    auto readers = pcsc_cpp::listReaders();
-    for (const auto& reader : readers)
+    juce::String uid = "";
+    
+    try
     {
-        DBG(reader.statusString());
-        if (reader.isCardInserted())
+        auto transactionGuard = card->beginTransaction();
+        auto response = card->transmit(UIDcommand);
+        
+        if (response.isOK())
         {
-            // request UID from NFC
-            auto uidCom = pcsc_cpp::CommandApdu(0xFF, 0xCA, 0x00, 0x00, {}, 0x00);
-            auto card = reader.connectToCard();
-            
-            auto transactionGuard = card->beginTransaction();
-            auto response = card->transmit(uidCom);
-            
-            if (response.isOK())
-            {
-                // print UID
-                auto bytes = response.data;
-                DBG(bytes2hexstr(bytes));
-            }
+            auto bytes = response.data;
+            uid = bytes2hexstr(bytes);
         }
+    }
+    catch (...)
+    {
+        DBG("Error in transmission");
+    }
+    
+    return uid;
+}
+
+void MainComponent::UIDtoVideo(juce::String UID)
+{
+    DBG(UID);
+    
+    if (UID == "")
+    {
+        DBG("UID Empty");
+        return;
+    }
+    
+    if (UID != currentUID)
+    {
+        videoComp.stop();
+        currentUID = UID;
+    }
+    
+    if (!videoComp.isPlaying())
+    {
+        videoComp.setPlayPosition(0.0f);
+        videoComp.play();
     }
 }
