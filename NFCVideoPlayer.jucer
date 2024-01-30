@@ -21,6 +21,12 @@
       <FILE id="Y4lLoo" name="utils.cpp" compile="1" resource="0" file="libpcsc/utils.cpp"/>
     </GROUP>
     <GROUP id="{255B26D5-F173-74EF-91A0-58B2F4C0DE5A}" name="Source">
+      <GROUP id="{BFFC65AA-2362-0AA6-C1E6-94D240974E1F}" name="Component">
+        <FILE id="OaBl0X" name="ReaderInfoDisplay.cpp" compile="1" resource="0"
+              file="Source/Components/ReaderInfoDisplay.cpp"/>
+        <FILE id="YA712m" name="ReaderInfoDisplay.h" compile="0" resource="0"
+              file="Source/Components/ReaderInfoDisplay.h"/>
+      </GROUP>
       <FILE id="wucq3U" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="pUkecK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="tk5MKq" name="MainComponent.cpp" compile="1" resource="0"

@@ -4,12 +4,13 @@
 MainComponent::MainComponent()
 : videoComp(true)
 {
-    addAndMakeVisible(videoComp);
-    
     loadVideos();
     
-    setSize (600, 400);
+    addAndMakeVisible(readerInfoDisplay);
+    addAndMakeVisible(videoComp);
+    
     startTimer(100);
+    setSize (600, 400);
 }
 
 MainComponent::~MainComponent()
@@ -24,18 +25,31 @@ void MainComponent::paint (juce::Graphics& g)
 
 void MainComponent::resized()
 {
-    videoComp.setBounds(getLocalBounds());
+    auto bounds = getLocalBounds();
+    
+    readerInfoDisplay.setBounds(bounds.removeFromTop(40));
+    videoComp.setBounds(bounds);
 }
 
 //==============================================================================
 void MainComponent::timerCallback()
 {
     auto readers = pcsc_cpp::listReaders();
-    for (const auto& reader : readers)
+    juce::String readerName = "-";
+    juce::String tagUID = "-";
+    
+    // For this application we just use the first reader returned.
+    // Only 1 will be connected
+    if (readers.size() > 0)
     {
+        auto reader = readers[0];
+        readerName = reader.name;
+        
         if (reader.isCardInserted())
-            cardInserted(reader);
+            tagUID = cardInserted(reader);
     }
+    
+    readerInfoDisplay.updateInfo(readerName, tagUID);
 }
 
 //==============================================================================
@@ -58,7 +72,7 @@ inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
     return hexStringBuilder.str();
 }
 
-void MainComponent::cardInserted(pcsc_cpp::Reader reader)
+juce::String MainComponent::cardInserted(pcsc_cpp::Reader reader)
 {
     auto card = reader.connectToCard();
     juce::String uid = getNFCUID(std::move(card));
@@ -71,11 +85,13 @@ void MainComponent::cardInserted(pcsc_cpp::Reader reader)
     {
         DBG("error with insertion");
     }
+    
+    return uid;
 }
 
 juce::String MainComponent::getNFCUID(pcsc_cpp::SmartCard::ptr card)
 {
-    juce::String uid = "";
+    juce::String uid = "-";
     
     try
     {

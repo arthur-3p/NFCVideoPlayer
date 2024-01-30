@@ -1,8 +1,9 @@
 #pragma once
 
 #include <JuceHeader.h>
-
 #include "../libpcsc/pcsc-cpp.hpp"
+
+#include "Components/ReaderInfoDisplay.h"
 
 //==============================================================================
 class MainComponent
@@ -23,7 +24,7 @@ public:
 
 private:
     void loadVideos();
-    void cardInserted(pcsc_cpp::Reader reader);
+    juce::String cardInserted(pcsc_cpp::Reader reader);
     juce::String getNFCUID(pcsc_cpp::SmartCard::ptr card);
     void UIDtoVideo(juce::String UID);
     
@@ -31,6 +32,8 @@ private:
     
     juce::VideoComponent videoComp;
     juce::String currentUID = "";
+    
+    ReaderInfoDisplay readerInfoDisplay;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
