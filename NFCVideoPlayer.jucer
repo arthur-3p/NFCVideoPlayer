@@ -26,6 +26,8 @@
               file="Source/Components/ReaderInfoDisplay.cpp"/>
         <FILE id="YA712m" name="ReaderInfoDisplay.h" compile="0" resource="0"
               file="Source/Components/ReaderInfoDisplay.h"/>
+        <FILE id="P8hjNt" name="VideoHolder.cpp" compile="1" resource="0" file="Source/Components/VideoHolder.cpp"/>
+        <FILE id="gMp70K" name="VideoHolder.h" compile="0" resource="0" file="Source/Components/VideoHolder.h"/>
       </GROUP>
       <FILE id="wucq3U" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="pUkecK" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>

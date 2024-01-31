@@ -2,12 +2,9 @@
 
 //==============================================================================
 MainComponent::MainComponent()
-: videoComp(true)
 {
-    loadVideos();
-    
     addAndMakeVisible(readerInfoDisplay);
-    addAndMakeVisible(videoComp);
+    addAndMakeVisible(videoHolder);
     
     startTimer(100);
     setSize (600, 400);
@@ -28,7 +25,7 @@ void MainComponent::resized()
     auto bounds = getLocalBounds();
     
     readerInfoDisplay.setBounds(bounds.removeFromTop(40));
-    videoComp.setBounds(bounds);
+    videoHolder.setBounds(bounds);
 }
 
 //==============================================================================
@@ -53,13 +50,6 @@ void MainComponent::timerCallback()
 }
 
 //==============================================================================
-void MainComponent::loadVideos()
-{
-    juce::File videoFile = juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDesktopDirectory).getChildFile("testVideo.mov");
-    videoComp.load(videoFile);
-}
-
-//==============================================================================
 inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
 {
     std::ostringstream hexStringBuilder;
@@ -79,7 +69,7 @@ juce::String MainComponent::cardInserted(pcsc_cpp::Reader reader)
     
     try
     {
-        UIDtoVideo(uid);
+        videoHolder.setTagUID(uid);
     }
     catch (...)
     {
@@ -110,21 +100,4 @@ juce::String MainComponent::getNFCUID(pcsc_cpp::SmartCard::ptr card)
     }
     
     return uid;
-}
-
-void MainComponent::UIDtoVideo(juce::String UID)
-{
-    if (UID == "") return;
-    
-    if (UID != currentUID)
-    {
-        videoComp.stop();
-        currentUID = UID;
-    }
-    
-    if (!videoComp.isPlaying())
-    {
-        videoComp.setPlayPosition(0.0f);
-        videoComp.play();
-    }
 }

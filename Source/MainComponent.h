@@ -4,6 +4,7 @@
 #include "../libpcsc/pcsc-cpp.hpp"
 
 #include "Components/ReaderInfoDisplay.h"
+#include "Components/VideoHolder.h"
 
 //==============================================================================
 class MainComponent
@@ -23,16 +24,12 @@ public:
     void timerCallback() override;
 
 private:
-    void loadVideos();
     juce::String cardInserted(pcsc_cpp::Reader reader);
     juce::String getNFCUID(pcsc_cpp::SmartCard::ptr card);
-    void UIDtoVideo(juce::String UID);
     
     pcsc_cpp::CommandApdu UIDcommand{0xFF, 0xCA, 0x00, 0x00, {}, 0x00};
     
-    juce::VideoComponent videoComp;
-    juce::String currentUID = "";
-    
+    VideoHolder videoHolder;
     ReaderInfoDisplay readerInfoDisplay;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
