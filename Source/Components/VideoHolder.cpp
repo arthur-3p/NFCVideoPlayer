@@ -42,7 +42,7 @@ void VideoHolder::hideVideos()
 
 juce::VideoComponent* VideoHolder::UIDtoVideo(juce::String UID)
 {
-    if (UID == "190e9f9f")
+    if (UID == "79559f9f")
         return videoComponents[0];
     else
         return videoComponents[1];
@@ -60,6 +60,9 @@ void VideoHolder::loadVideos()
 
     for (auto f : childFiles)
     {
+        if (f.isHidden())
+            continue;
+        
         juce::VideoComponent* newVideoComponent = new juce::VideoComponent(false);
         newVideoComponent->load(f);
         videoComponents.add(std::move(newVideoComponent));
