@@ -73,6 +73,8 @@ public:
             setResizable (true, true);
             centreWithSize (getWidth(), getHeight());
            #endif
+            
+            juce::Desktop::getInstance().setScreenSaverEnabled(false);
 
             setVisible (true);
         }

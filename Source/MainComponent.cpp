@@ -3,8 +3,9 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    addAndMakeVisible(readerInfoDisplay);
     addAndMakeVisible(videoHolder);
+    addChildComponent(readerInfoDisplay);
+    setWantsKeyboardFocus(true);
     
     startTimer(100);
     setSize (600, 400);
@@ -23,9 +24,25 @@ void MainComponent::paint (juce::Graphics& g)
 void MainComponent::resized()
 {
     auto bounds = getLocalBounds();
+
+    if (readerInfoDisplay.isVisible())
+        readerInfoDisplay.setBounds(bounds.removeFromTop(40));
     
-    readerInfoDisplay.setBounds(bounds.removeFromTop(40));
     videoHolder.setBounds(bounds);
+
+}
+
+//==============================================================================
+bool MainComponent::keyPressed(const juce::KeyPress &key)
+{
+    if (key.getTextCharacter() == 'd')
+    {
+        readerInfoDisplay.setVisible(!readerInfoDisplay.isVisible());
+        resized();
+        return true;
+    }
+    
+    return false;
 }
 
 //==============================================================================

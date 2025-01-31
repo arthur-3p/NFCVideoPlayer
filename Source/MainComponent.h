@@ -21,6 +21,9 @@ public:
     void resized() override;
     
     //==============================================================================
+    bool keyPressed(const juce::KeyPress &key) override;
+    
+    //==============================================================================
     void timerCallback() override;
 
 private:

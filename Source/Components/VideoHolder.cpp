@@ -14,38 +14,46 @@ VideoHolder::VideoHolder()
 {
     loadVideos();
     
-    for (auto v : videoComponents)
+    for (auto* v : videos)
         addChildComponent(v);
+    
+    resumeLoop();
 }
 
 void VideoHolder::resized()
 {
     auto bounds = getLocalBounds();
     
-    for (auto v : videoComponents)
+    for (auto* v : videos)
         v->setBounds(bounds);
-}
-
-void VideoHolder::stopVideosPlaying()
-{
-    for (auto v : videoComponents)
-    {
-        v->stop();
-    }
 }
 
 void VideoHolder::hideVideos()
 {
-    for (auto v : videoComponents)
-        v->setVisible(false);
+    for (auto* v : videos)
+        v->stopAndHide();
 }
 
-juce::VideoComponent* VideoHolder::UIDtoVideo(juce::String UID)
+Video* VideoHolder::UIDtoVideo(juce::String UID)
 {
-    if (UID == "79559f9f")
-        return videoComponents[0];
-    else
-        return videoComponents[1];
+    for (auto* v : videos)
+    {
+        if(v->UID == UID)
+            return v;
+    }
+    
+    if (UID == "fallback")  // We can't find fallback video... Uh oh.
+    {
+        jassertfalse;
+        return nullptr;
+    }
+    else  // returning fallback video
+        return UIDtoVideo("fallback");
+}
+
+void VideoHolder::resumeLoop()
+{
+    setTagUID("loop");
 }
 
 void VideoHolder::loadVideos()
@@ -63,25 +71,50 @@ void VideoHolder::loadVideos()
         if (f.isHidden())
             continue;
         
-        juce::VideoComponent* newVideoComponent = new juce::VideoComponent(false);
-        newVideoComponent->load(f);
-        videoComponents.add(std::move(newVideoComponent));
+        videos.add(new Video(f));
+        videos.getLast()->addChangeListener(this);
     }
 }
 
 void VideoHolder::setTagUID(juce::String UID)
 {
-    if (UID == currentUID || UID == "-")
+    if (UID == "-")
         return;
     
-    stopVideosPlaying();
-    hideVideos();
+    if (currentVideo && UID == currentVideo->UID)
+        return;
     
-    currentUID = UID;
+    Video* video = UIDtoVideo(UID);
     
-    juce::VideoComponent* video = UIDtoVideo(currentUID);
-    video->setPlayPosition(0.0f);
-    video->setVisible(true);
-    video->play();
+    if (video == currentVideo)
+        return;
+    
+    if (video == nullptr)
+        return;
+    
+    if(currentVideo)
+        currentVideo->stopAndHide();
+    
+    video->startAndMakeVisible();
+    
+    currentVideo = video;
+}
+
+void VideoHolder::changeListenerCallback(juce::ChangeBroadcaster *source)
+{
+    // Receiving this from a video that has finished, and is not looped.
+    Video* video = dynamic_cast<Video*>(source);
+    if (video)
+    {
+        // Video is the current video, and it's finished. Resume looped video
+        if (video == currentVideo)
+        {
+            if (currentVideo)
+                currentVideo->stopAndHide();
+            
+            resumeLoop();
+        }
+    }
+    
 }
 
