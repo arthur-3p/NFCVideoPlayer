@@ -1,7 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../libpcsc/pcsc-cpp.hpp"
+#include "libpcsc/pcsc-cpp.hpp"
 
 #include "Components/ReaderInfoDisplay.h"
 #include "Components/VideoHolder.h"
