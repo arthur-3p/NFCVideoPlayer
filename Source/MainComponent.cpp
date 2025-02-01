@@ -65,6 +65,7 @@ void MainComponent::timerCallback()
 }
 
 //==============================================================================
+#if USING_PCSC
 inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
 {
     std::ostringstream hexStringBuilder;
@@ -132,7 +133,9 @@ void MainComponent::readPCSC(juce::String& readerName, juce::String& UID)
             UID = cardInserted(reader);
     }
 }
+#endif
 
+#if USING_ARDUINO
 void MainComponent::readArduino(juce::String& readerName, juce::String& UID)
 {
     if (serialPortListMonitor.hasListChanged())
@@ -162,3 +165,4 @@ void MainComponent::updateSelectedSerialDevice()
     }
         
 }
+#endif
