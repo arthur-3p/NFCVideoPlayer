@@ -4,23 +4,6 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" defines="USING_PCSC=0&#10;USING_ARDUINO=1">
   <MAINGROUP id="sWsS7L" name="NFCVideoPlayer">
     <GROUP id="{255B26D5-F173-74EF-91A0-58B2F4C0DE5A}" name="Source">
-      <GROUP id="{6CEE575C-6E78-19B4-5825-56F0B79E47DD}" name="libpcsc">
-        <FILE id="sGa0kf" name="comp_winscard.hpp" compile="0" resource="0"
-              file="Source/libpcsc/comp_winscard.hpp"/>
-        <FILE id="b3pXfb" name="Context.hpp" compile="0" resource="0" file="Source/libpcsc/Context.hpp"/>
-        <FILE id="zcxuid" name="flag_set.hpp" compile="0" resource="0" file="Source/libpcsc/flag_set.hpp"/>
-        <FILE id="OBYS0F" name="LICENSE" compile="0" resource="1" file="Source/libpcsc/LICENSE"/>
-        <FILE id="N93hPX" name="listReaders.cpp" compile="1" resource="0" file="Source/libpcsc/listReaders.cpp"/>
-        <FILE id="s8eqGg" name="magic_enum.hpp" compile="0" resource="0" file="Source/libpcsc/magic_enum.hpp"/>
-        <FILE id="p2ye8X" name="pcsc-cpp-utils.hpp" compile="0" resource="0"
-              file="Source/libpcsc/pcsc-cpp-utils.hpp"/>
-        <FILE id="wS3xK5" name="pcsc-cpp.hpp" compile="0" resource="0" file="Source/libpcsc/pcsc-cpp.hpp"/>
-        <FILE id="muX012" name="Reader.cpp" compile="1" resource="0" file="Source/libpcsc/Reader.cpp"/>
-        <FILE id="FxdjEM" name="README.md" compile="0" resource="1" file="Source/libpcsc/README.md"/>
-        <FILE id="WDbL2C" name="SCardCall.hpp" compile="0" resource="0" file="Source/libpcsc/SCardCall.hpp"/>
-        <FILE id="MVtRYU" name="SmartCard.cpp" compile="1" resource="0" file="Source/libpcsc/SmartCard.cpp"/>
-        <FILE id="AhlgTh" name="utils.cpp" compile="1" resource="0" file="Source/libpcsc/utils.cpp"/>
-      </GROUP>
       <GROUP id="{BF29A940-493F-301A-6AA1-B2066AA0A819}" name="Serial">
         <FILE id="CWTqTz" name="SerialDevice.cpp" compile="1" resource="0"
               file="Source/Serial/SerialDevice.cpp"/>
@@ -35,6 +18,8 @@
               file="Source/Components/ReaderInfoDisplay.cpp"/>
         <FILE id="YA712m" name="ReaderInfoDisplay.h" compile="0" resource="0"
               file="Source/Components/ReaderInfoDisplay.h"/>
+        <FILE id="bamt19" name="Video.cpp" compile="1" resource="0" file="Source/Components/Video.cpp"/>
+        <FILE id="wDqN4r" name="Video.h" compile="0" resource="0" file="Source/Components/Video.h"/>
         <FILE id="P8hjNt" name="VideoHolder.cpp" compile="1" resource="0" file="Source/Components/VideoHolder.cpp"/>
         <FILE id="gMp70K" name="VideoHolder.h" compile="0" resource="0" file="Source/Components/VideoHolder.h"/>
       </GROUP>

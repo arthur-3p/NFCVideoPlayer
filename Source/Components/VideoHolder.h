@@ -11,66 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-
-class Video : public juce::Component, public juce::ChangeBroadcaster
-{
-public:
-    
-    Video(juce::File f)
-    : file(f)
-    , videoComponent(false)
-    , UID(file.getFileNameWithoutExtension())
-    {
-        loop = UID == "loop";
-        
-        videoComponent.onPlaybackStopped = [this] () {
-            playbackStopped();
-        };
-        
-        addAndMakeVisible(videoComponent);
-    }
-    
-    ~Video()
-    {
-        stopAndHide();
-    }
-    
-    void resized() override
-    {
-        videoComponent.setBounds(getLocalBounds());
-    }
-    
-    void startAndMakeVisible()
-    {
-        videoComponent.load(file);
-        setVisible(true);
-        videoComponent.play();
-    }
-    
-    void stopAndHide()
-    {
-        setVisible(false);
-        videoComponent.closeVideo();
-    }
-    
-    void playbackStopped()
-    {
-        if (loop && isVisible())
-        {
-            videoComponent.setPlayPosition(0.0f);
-            videoComponent.play();
-        }
-        else
-        {
-            sendChangeMessage();
-        }
-    }
-    
-    juce::File file;
-    juce::VideoComponent videoComponent;
-    juce::String UID;
-    bool loop = false;
-};
+#include "Video.h"
 
 class VideoHolder
 : public juce::Component

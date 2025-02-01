@@ -1,5 +1,7 @@
 #pragma once
 
+#include <JuceHeader.h>
+
 #include "SerialPortListMonitor.h"
 
 // NOTE: This class could be named for the name of the thing you are connecting to: LEDContllerDevice, DrumMachineDevice, SolarMonitorDevice, etc
