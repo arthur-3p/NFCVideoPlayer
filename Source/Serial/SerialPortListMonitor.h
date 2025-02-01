@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "../SerialPortModule/juce_serialport.h"
 
 const auto kSerialPortListMonitorSleepTime { 1000 };
 

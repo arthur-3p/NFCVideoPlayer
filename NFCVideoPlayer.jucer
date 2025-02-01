@@ -4,6 +4,18 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" defines="USING_PCSC=0&#10;USING_ARDUINO=1">
   <MAINGROUP id="sWsS7L" name="NFCVideoPlayer">
     <GROUP id="{255B26D5-F173-74EF-91A0-58B2F4C0DE5A}" name="Source">
+      <GROUP id="{93997E9C-6F58-2E98-5173-F165CFFC1970}" name="SerialPortModule">
+        <FILE id="F2Kal2" name="juce_serialport.h" compile="0" resource="0"
+              file="Source/SerialPortModule/juce_serialport.h"/>
+        <FILE id="HdPWr5" name="juce_serialport_Android.cpp" compile="1" resource="0"
+              file="Source/SerialPortModule/juce_serialport_Android.cpp"/>
+        <FILE id="zMCAsM" name="juce_serialport_iOS.cpp" compile="1" resource="0"
+              file="Source/SerialPortModule/juce_serialport_iOS.cpp"/>
+        <FILE id="La1zGh" name="juce_serialport_OSX.cpp" compile="1" resource="0"
+              file="Source/SerialPortModule/juce_serialport_OSX.cpp"/>
+        <FILE id="Aimvdx" name="juce_serialport_Windows.cpp" compile="1" resource="0"
+              file="Source/SerialPortModule/juce_serialport_Windows.cpp"/>
+      </GROUP>
       <GROUP id="{BF29A940-493F-301A-6AA1-B2066AA0A819}" name="Serial">
         <FILE id="CWTqTz" name="SerialDevice.cpp" compile="1" resource="0"
               file="Source/Serial/SerialDevice.cpp"/>
@@ -36,7 +48,6 @@
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
-    <MODULE id="juce_serialport" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
@@ -54,7 +65,6 @@
         <MODULEPATH id="juce_gui_basics" path="JUCE/modules"/>
         <MODULEPATH id="juce_video" path="JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="JUCE/modules"/>
-        <MODULEPATH id="juce_serialport" path="JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
@@ -69,7 +79,6 @@
         <MODULEPATH id="juce_graphics" path="JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="JUCE/modules"/>
-        <MODULEPATH id="juce_serialport" path="JUCE/modules"/>
         <MODULEPATH id="juce_video" path="JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
