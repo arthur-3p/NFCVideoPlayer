@@ -11,6 +11,7 @@ SerialDevice::SerialDevice (juce::String newSerialPortName)
 {
     serialPortName = newSerialPortName;
     openSerialPort();
+    updated.store(false);
 //    startTimer (5);
 }
 
@@ -20,10 +21,10 @@ SerialDevice::~SerialDevice ()
     closeSerialPort ();
 }
 
-juce::Array<int> SerialDevice::getCurrentValues()
+juce::String SerialDevice::getCurrentUID()
 {
     juce::ScopedLock lock(cs);
-    return currentValues;
+    return uid;
 }
 
 bool SerialDevice::openSerialPort ()
@@ -81,22 +82,8 @@ void SerialDevice::changeListenerCallback (juce::ChangeBroadcaster* source)
     }
     
     DBG(string);
-    juce::String currentNumberString;
-    currentValues.clear();
-    for (int index = 0; index < string.length(); index++)
-    {
-        juce::juce_wchar character = string[index];
-        if (character != '[' &&
-            character != ']' )
-        {
-            if (character != ',')
-                currentNumberString += juce::String::charToString(character);
-            else
-            {
-                currentValues.add(currentNumberString.getIntValue());
-                currentNumberString.clear();
-            }
-        }
-    }
+    uid = string;
+    
+    updated.store(true);
 }
 

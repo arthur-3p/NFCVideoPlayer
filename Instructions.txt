@@ -1,0 +1,9 @@
+Instructions:
+
+- Add folder to desktop with videos in it.
+- Name videos according to the NFC tag id.
+	- The NFC tag ID can be seen in the NFCVideoPlayer by bringing up the info bar
+- Make sure there is a video in the folder called "fallback" that has a video to be played when the NFC id tag is not recognised or registered.
+- Make sure there is a video in the folder Calle "loop" to be played on loop when the reader is inbeetween NFC read.
+- In the app, press the 'd' key to bring up or close the info bar that shows reader id and tag id.
+

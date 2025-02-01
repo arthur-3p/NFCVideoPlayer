@@ -1,5 +1,7 @@
 #include "MainComponent.h"
 
+#define BOARD_NAME "/dev/tty.usbmodem1101"
+
 //==============================================================================
 MainComponent::MainComponent()
 {
@@ -48,22 +50,18 @@ bool MainComponent::keyPressed(const juce::KeyPress &key)
 //==============================================================================
 void MainComponent::timerCallback()
 {
-    auto readers = pcsc_cpp::listReaders();
     juce::String readerName = "-";
-    juce::String tagUID = "-";
+    juce::String UID = "-";
     
-    // For this application we just use the first reader returned.
-    // Only 1 will be connected
-    if (readers.size() > 0)
-    {
-        auto reader = readers[0];
-        readerName = reader.name;
-        
-        if (reader.isCardInserted())
-            tagUID = cardInserted(reader);
-    }
-    
-    readerInfoDisplay.updateInfo(readerName, tagUID);
+#if USING_PCSC
+    readPCSC(readerName, UID);
+#elif USING_ARDUINO
+    readArduino(readerName, UID);
+#else
+    jassertfalse;  // Set the preprocessor definitions in Projucer depending on what reader system.
+#endif
+
+    readerInfoDisplay.updateInfo(readerName, UID);
 }
 
 //==============================================================================
@@ -117,4 +115,50 @@ juce::String MainComponent::getNFCUID(pcsc_cpp::SmartCard::ptr card)
     }
     
     return uid;
+}
+
+void MainComponent::readPCSC(juce::String& readerName, juce::String& UID)
+{
+    auto readers = pcsc_cpp::listReaders();
+    
+    // For this application we just use the first reader returned.
+    // Only 1 will be connected
+    if (readers.size() > 0)
+    {
+        auto reader = readers[0];
+        readerName = reader.name;
+        
+        if (reader.isCardInserted())
+            UID = cardInserted(reader);
+    }
+}
+
+void MainComponent::readArduino(juce::String& readerName, juce::String& UID)
+{
+    if (serialPortListMonitor.hasListChanged())
+        juce::MessageManager::callAsync([this]() { updateSelectedSerialDevice(); });
+    
+    if (serialDevice)
+    {
+        readerName = serialDevice->getSerialPortName();
+        UID = serialDevice->getCurrentUID();
+        if (serialDevice->hasUpdated())
+            videoHolder.setTagUID(UID);
+    }
+}
+
+void MainComponent::updateSelectedSerialDevice()
+{
+    juce::StringArray devices = serialPortListMonitor.getSerialPortList().getAllValues();
+    
+    if (devices.contains(BOARD_NAME) && currentSerialDevice.compare(BOARD_NAME))
+    {
+        currentSerialDevice = BOARD_NAME;
+        serialDevice = std::make_unique<SerialDevice>(currentSerialDevice);
+    }
+    else
+    {
+        currentSerialDevice.clear();
+    }
+        
 }

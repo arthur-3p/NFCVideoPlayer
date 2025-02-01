@@ -9,9 +9,16 @@ public:
     SerialDevice (juce::String newSerialPortName);
     ~SerialDevice ();
 
-    juce::Array<int> getCurrentValues();
-    
+    juce::String getCurrentUID();
+    juce::String getSerialPortName() { return serialPortName; }
     void changeListenerCallback (juce::ChangeBroadcaster* source) override;
+    
+    bool hasUpdated()
+    {
+        bool state = updated.load();
+        updated.store(false);
+        return state;
+    }
     
 private:
     juce::String serialPortName;
@@ -22,9 +29,7 @@ private:
     bool openSerialPort (void);
     void closeSerialPort (void);
 
-//    void timerCallback () override;
-    
+    std::atomic<bool> updated;
     juce::CriticalSection cs;
-    
-    juce::Array<int> currentValues;
+    juce::String uid = "-";
 };
