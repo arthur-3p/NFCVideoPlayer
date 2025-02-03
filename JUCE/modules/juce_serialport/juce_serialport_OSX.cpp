@@ -7,7 +7,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#if JUCE_MAC
+#if JUCE_MAC || JUCE_LINUX
 
 using namespace juce;
 
