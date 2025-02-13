@@ -11,7 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-
+#include "../ffmpeg/FFmpegVideoComponent.h"
 //==============================================================================
 /*
 */
@@ -27,7 +27,7 @@ public:
     void playbackStopped();
         
     juce::File file;
-    juce::VideoComponent videoComponent;
+    FFmpegVideoComponent videoComponent;
     juce::String UID;
     bool loop = false;
 

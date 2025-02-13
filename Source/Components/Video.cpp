@@ -13,7 +13,6 @@
 
 Video::Video(juce::File f)
 : file(f)
-, videoComponent(false)
 , UID(file.getFileNameWithoutExtension())
 {
     loop = UID == "loop";
