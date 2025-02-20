@@ -9,11 +9,11 @@ FFMPEG_LIB=../../ffmpeg/osx_arm/lib/
 echo "FFMPEG_LIB:\t" $FFMPEG_LIB  >> $LOGFILE
 
 ##### App bundle name
-APP_BUNDLE=NFCVideoPlayer.app
+APP_BUNDLE=FFmpegVideoComponent.app
 echo "APP_BUNDLE:\t" $APP_BUNDLE  >> $LOGFILE
 
 ##### executable name #####
-APP_NAME=NFCVideoPlayer
+APP_NAME=FFmpegVideoComponent
 echo "APP_NAME:\t" $APP_NAME  >> $LOGFILE
 
 ##### Runpath to set #####
