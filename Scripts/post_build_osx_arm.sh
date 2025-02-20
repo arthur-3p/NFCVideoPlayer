@@ -5,15 +5,15 @@ LOGFILE=../../script_log.txt
 rm $LOGFILE
 
 ##### original installation of ffmpeg #####
-FFMPEG_LIB=../../ffmpeg/osx_arm/lib/
+FFMPEG_LIB=../../osx_arm/lib/
 echo "FFMPEG_LIB:\t" $FFMPEG_LIB  >> $LOGFILE
 
 ##### App bundle name
-APP_BUNDLE=FFmpegVideoComponent.app
+APP_BUNDLE=NFCVideoPlayer.app
 echo "APP_BUNDLE:\t" $APP_BUNDLE  >> $LOGFILE
 
 ##### executable name #####
-APP_NAME=FFmpegVideoComponent
+APP_NAME=NFCVideoPlayer
 echo "APP_NAME:\t" $APP_NAME  >> $LOGFILE
 
 ##### Runpath to set #####

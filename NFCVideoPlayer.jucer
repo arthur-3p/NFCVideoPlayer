@@ -4,22 +4,11 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" defines="USING_PCSC=0&#10;USING_ARDUINO=1">
   <MAINGROUP id="sWsS7L" name="NFCVideoPlayer">
     <GROUP id="{255B26D5-F173-74EF-91A0-58B2F4C0DE5A}" name="Source">
-      <GROUP id="{6872E647-5531-B88B-CE1F-D539411F532F}" name="libpcsc">
-        <FILE id="lOI8gU" name="comp_winscard.hpp" compile="0" resource="0"
-              file="Source/libpcsc/comp_winscard.hpp"/>
-        <FILE id="ApFMJG" name="Context.hpp" compile="0" resource="0" file="Source/libpcsc/Context.hpp"/>
-        <FILE id="g8bUjO" name="flag_set.hpp" compile="0" resource="0" file="Source/libpcsc/flag_set.hpp"/>
-        <FILE id="Jh2hez" name="LICENSE" compile="0" resource="1" file="Source/libpcsc/LICENSE"/>
-        <FILE id="zfbjNO" name="listReaders.cpp" compile="1" resource="0" file="Source/libpcsc/listReaders.cpp"/>
-        <FILE id="brI6fr" name="magic_enum.hpp" compile="0" resource="0" file="Source/libpcsc/magic_enum.hpp"/>
-        <FILE id="Kzp9IS" name="pcsc-cpp-utils.hpp" compile="0" resource="0"
-              file="Source/libpcsc/pcsc-cpp-utils.hpp"/>
-        <FILE id="xwjMfd" name="pcsc-cpp.hpp" compile="0" resource="0" file="Source/libpcsc/pcsc-cpp.hpp"/>
-        <FILE id="wzg8Z9" name="Reader.cpp" compile="1" resource="0" file="Source/libpcsc/Reader.cpp"/>
-        <FILE id="YL1MOl" name="README.md" compile="0" resource="1" file="Source/libpcsc/README.md"/>
-        <FILE id="ZCrpdd" name="SCardCall.hpp" compile="0" resource="0" file="Source/libpcsc/SCardCall.hpp"/>
-        <FILE id="iPNQzn" name="SmartCard.cpp" compile="1" resource="0" file="Source/libpcsc/SmartCard.cpp"/>
-        <FILE id="RQ14n6" name="utils.cpp" compile="1" resource="0" file="Source/libpcsc/utils.cpp"/>
+      <GROUP id="{C2493CBE-2E4B-E2D3-48F0-2B1CE5209544}" name="seriallib">
+        <GROUP id="{1326E74A-AB6A-0A03-178C-E2CB7FA68334}" name="lib">
+          <FILE id="DEFRtE" name="serialib.cpp" compile="1" resource="0" file="serialib/lib/serialib.cpp"/>
+          <FILE id="gFpdDO" name="serialib.h" compile="0" resource="0" file="serialib/lib/serialib.h"/>
+        </GROUP>
       </GROUP>
       <GROUP id="{027DDBFB-7486-1B79-A427-460858013669}" name="ffmpeg">
         <FILE id="NvN7f0" name="AudioBufferFIFO.h" compile="0" resource="0"
@@ -45,15 +34,6 @@
               file="Source/ffmpeg/FFmpegVideoListener.h"/>
         <FILE id="GhsIib" name="FFmpegVideoScaler.h" compile="0" resource="0"
               file="Source/ffmpeg/FFmpegVideoScaler.h"/>
-      </GROUP>
-      <GROUP id="{BF29A940-493F-301A-6AA1-B2066AA0A819}" name="Serial">
-        <FILE id="CWTqTz" name="SerialDevice.cpp" compile="1" resource="0"
-              file="Source/Serial/SerialDevice.cpp"/>
-        <FILE id="ftB3s0" name="SerialDevice.h" compile="0" resource="0" file="Source/Serial/SerialDevice.h"/>
-        <FILE id="G6k1K3" name="SerialPortListMonitor.cpp" compile="1" resource="0"
-              file="Source/Serial/SerialPortListMonitor.cpp"/>
-        <FILE id="HCdnhz" name="SerialPortListMonitor.h" compile="0" resource="0"
-              file="Source/Serial/SerialPortListMonitor.h"/>
       </GROUP>
       <GROUP id="{BFFC65AA-2362-0AA6-C1E6-94D240974E1F}" name="Component">
         <FILE id="OaBl0X" name="ReaderInfoDisplay.cpp" compile="1" resource="0"
@@ -88,8 +68,8 @@
   </MODULES>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
-    <XCODE_MAC targetFolder="Builds/MacOSX" extraLinkerFlags="-framework PCSC&#10;-L${FFMPEG_ROOT}/lib&#10;"
-               extraDefs="FFMPEG_ROOT=../../ffmpeg/osx_arm&#10;" extraCompilerFlags="-I${FFMPEG_ROOT}/include"
+    <XCODE_MAC targetFolder="Builds/MacOSX" extraLinkerFlags="-L${FFMPEG_ROOT}/lib&#10;"
+               extraDefs="FFMPEG_ROOT=../../osx_arm&#10;" extraCompilerFlags="-I${FFMPEG_ROOT}/include"
                externalLibraries="avformat&#10;avcodec&#10;avutil&#10;swscale&#10;swresample"
                postbuildCommand="#!/bin/sh&#10;&#10;sh ../../Scripts/post_build_osx_arm.sh">
       <CONFIGURATIONS>

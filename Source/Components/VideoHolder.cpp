@@ -17,7 +17,7 @@ VideoHolder::VideoHolder()
     for (auto* v : videos)
         addChildComponent(v);
     
-    resumeLoop();
+//    resumeLoop();
 }
 
 void VideoHolder::resized()

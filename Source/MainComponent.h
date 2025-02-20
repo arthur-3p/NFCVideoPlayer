@@ -2,13 +2,7 @@
 
 #include <JuceHeader.h>
 
-#if USING_PCSC
-#include "libpcsc/pcsc-cpp.hpp"
-#elif USING_ARDUINO
-#include "./Serial/SerialPortListMonitor.h"
-#include "./Serial/SerialDevice.h"
-#endif
-
+#include "../serialib/lib/serialib.h"
 #include "Components/ReaderInfoDisplay.h"
 #include "Components/VideoHolder.h"
 
@@ -33,19 +27,12 @@ public:
     void timerCallback() override;
 
 private:
-#if USING_PCSC
-    juce::String cardInserted(pcsc_cpp::Reader reader);
-    juce::String getNFCUID(pcsc_cpp::SmartCard::ptr card);
-    void readPCSC(juce::String& readerName, juce::String& UID);
-    
-    pcsc_cpp::CommandApdu UIDcommand{0xFF, 0xCA, 0x00, 0x00, {}, 0x00};
-#elif USING_ARDUINO
-    SerialPortListMonitor serialPortListMonitor;
-    juce::String currentSerialDevice{""};
+    char openDevice();
+    serialib serial;
+//    juce::String currentSerialDevice{""};
     void updateSelectedSerialDevice();
-    std::unique_ptr<SerialDevice> serialDevice;
-    void readArduino(juce::String& readerName, juce::String& UID);
-#endif
+//    std::unique_ptr<SerialDevice> serialDevice;
+    void readSerial(juce::String& readerName, juce::String& UID);
     
     VideoHolder videoHolder;
     ReaderInfoDisplay readerInfoDisplay;

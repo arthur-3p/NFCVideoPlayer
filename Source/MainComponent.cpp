@@ -1,6 +1,18 @@
 #include "MainComponent.h"
 
-#define BOARD_NAME "/dev/tty.usbmodem1101"
+#if JUCE_WINDOWS
+    //for serial ports above "COM9", we must use this extended syntax of "\\.\COMx".
+    //also works for COM0 to COM9.
+    //https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea?redirectedfrom=MSDN#communications-resources
+    #define SERIAL_PORT "\\\\.\\COM1"
+#endif
+#if JUCE_LINUX
+    #define SERIAL_PORT "/dev/ttyACM0"
+#endif
+#if defined JUCE_MAC
+    #define SERIAL_PORT "/dev/tty.usbmodem101"
+#endif
+
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -9,12 +21,28 @@ MainComponent::MainComponent()
     addChildComponent(readerInfoDisplay);
     setWantsKeyboardFocus(true);
     
+    char openingErrorCode = openDevice();
+    
+    if (openingErrorCode != 1)
+    {
+        DBG("Failure opening device. Error: " << juce::String(openingErrorCode));
+    }
+    
     startTimer(100);
+    
     setSize (600, 400);
 }
 
 MainComponent::~MainComponent()
 {
+    serial.closeDevice();
+}
+
+char MainComponent::openDevice()
+{
+    // Connection to serial port
+    // If connection fails, return the error code otherwise
+    return serial.openDevice(SERIAL_PORT, 9600);
 }
 
 //==============================================================================
@@ -53,116 +81,48 @@ void MainComponent::timerCallback()
     juce::String readerName = "-";
     juce::String UID = "-";
     
-#if USING_PCSC
-    readPCSC(readerName, UID);
-#elif USING_ARDUINO
-    readArduino(readerName, UID);
-#else
-    jassertfalse;  // Set the preprocessor definitions in Projucer depending on what reader system.
-#endif
+    readSerial(readerName, UID);
 
     readerInfoDisplay.updateInfo(readerName, UID);
 }
 
 //==============================================================================
-#if USING_PCSC
-inline std::string bytes2hexstr(const pcsc_cpp::byte_vector& bytes)
+void MainComponent::readSerial(juce::String& readerName, juce::String& UID)
 {
-    std::ostringstream hexStringBuilder;
-
-    hexStringBuilder << std::setfill('0') << std::hex;
-
-    for (const auto byte : bytes)
-        hexStringBuilder << std::setw(2) << short(byte);
-
-    return hexStringBuilder.str();
-}
-
-juce::String MainComponent::cardInserted(pcsc_cpp::Reader reader)
-{
-    auto card = reader.connectToCard();
-    juce::String uid = getNFCUID(std::move(card));
+    if (!serial.isDeviceOpen())
+        return;
     
-    try
-    {
-        videoHolder.setTagUID(uid);
-    }
-    catch (...)
-    {
-        DBG("error with insertion");
-    }
-    
-    return uid;
-}
+    char buffer[9] = "r";
 
-juce::String MainComponent::getNFCUID(pcsc_cpp::SmartCard::ptr card)
-{
-    juce::String uid = "-";
-    
-    try
+    // Write the string on the serial device.
+    serial.writeString(buffer);
+
+    // Read string that arduino writes to serial in response.
+    int readError = serial.readString(buffer, '\r', 9, 1);
+    if (readError > 0 )
     {
-        auto transactionGuard = card->beginTransaction();
-        auto response = card->transmit(UIDcommand);
+        UID = juce::String(buffer);
+        DBG(UID);
         
-        if (response.isOK())
-        {
-            auto bytes = response.data;
-            uid = bytes2hexstr(bytes);
-        }
+        videoHolder.setTagUID(UID);
     }
-    catch (...)
-    {
-        DBG("Error in transmission");
-    }
-    
-    return uid;
-}
-
-void MainComponent::readPCSC(juce::String& readerName, juce::String& UID)
-{
-    auto readers = pcsc_cpp::listReaders();
-    
-    // For this application we just use the first reader returned.
-    // Only 1 will be connected
-    if (readers.size() > 0)
-    {
-        auto reader = readers[0];
-        readerName = reader.name;
-        
-        if (reader.isCardInserted())
-            UID = cardInserted(reader);
-    }
-}
-#endif
-
-#if USING_ARDUINO
-void MainComponent::readArduino(juce::String& readerName, juce::String& UID)
-{
-    if (serialPortListMonitor.hasListChanged())
-        juce::MessageManager::callAsync([this]() { updateSelectedSerialDevice(); });
-    
-    if (serialDevice)
-    {
-        readerName = serialDevice->getSerialPortName();
-        UID = serialDevice->getCurrentUID();
-        if (serialDevice->hasUpdated())
-            videoHolder.setTagUID(UID);
-    }
+    else if (readError == 0)
+        return;  // do nothing
+    else
+        DBG("Error Reading. Error code: " << readError);
 }
 
 void MainComponent::updateSelectedSerialDevice()
 {
-    juce::StringArray devices = serialPortListMonitor.getSerialPortList().getAllValues();
-    
-    if (devices.contains(BOARD_NAME) && currentSerialDevice.compare(BOARD_NAME))
-    {
-        currentSerialDevice = BOARD_NAME;
-        serialDevice = std::make_unique<SerialDevice>(currentSerialDevice);
-    }
-    else
-    {
-        currentSerialDevice.clear();
-    }
-        
+//    juce::StringArray devices = serialPortListMonitor.getSerialPortList().getAllValues();
+//    
+//    if (devices.contains(BOARD_NAME) && currentSerialDevice.compare(BOARD_NAME))
+//    {
+//        currentSerialDevice = BOARD_NAME;
+//        serialDevice = std::make_unique<SerialDevice>(currentSerialDevice);
+//    }
+//    else
+//    {
+//        currentSerialDevice.clear();
+//    }
 }
-#endif

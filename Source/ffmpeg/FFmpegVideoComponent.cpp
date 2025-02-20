@@ -54,23 +54,22 @@ FFmpegVideoComponent::~FFmpegVideoComponent()
 void FFmpegVideoComponent::paint (juce::Graphics& g)
 {
     //convert video frame to image and paint it
-    g.fillAll (juce::Colours::black);
-    g.setColour(juce::Colours::white);
+    g.fillAll (juce::Colours::white);
     if ( !videoReader )
     {
-        g.drawFittedText ("FFMpegVideoComponent: Video Reader not initialized.", getLocalBounds(), juce::Justification::centred, 1);
+        DBG("FFMpegVideoComponent: Video Reader not initialized.");
     }
     else if ( !videoReader->isMediaOpen() )
     {
-        g.drawFittedText ("FFMpegVideoComponent: No Video loaded", getLocalBounds(), juce::Justification::centred, 1);
+        DBG("FFMpegVideoComponent: No Video loaded");
     }
     else if( !currentAVFrame )
     {
-        g.drawFittedText ("FFMpegVideoComponent: No frame loaded to display.", getLocalBounds(), juce::Justification::centred, 1);
+        DBG("FFMpegVideoComponent: No frame loaded to display.");
     }
     else if ( !currentFrameAsImage.isValid() )
     {
-        g.drawFittedText ("FFMpegVideoComponent: Current image is not valid.", getLocalBounds(), juce::Justification::centred, 1);
+        DBG("FFMpegVideoComponent: Current image is not valid.");
     }
     else
     {

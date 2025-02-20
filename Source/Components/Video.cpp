@@ -51,8 +51,8 @@ void Video::playbackStopped()
 {
     if (loop && isVisible())
     {
-        videoComponent.setPlayPosition(0.0f);
-        videoComponent.play();
+        videoComponent.closeVideo();
+        startAndMakeVisible();
     }
     else
     {
