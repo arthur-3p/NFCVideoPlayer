@@ -233,7 +233,10 @@ void FFmpegMediaDecodeThread::run()
             //wait until continue signal
             //DBG("Wait until thread is continued...");
             waitUntilContinue.reset();
+            // TODO: debug for pi.
+            DBG("WaitUntilContinue waiting...");
             waitUntilContinue.wait(-1);
+            DBG("WaitUntilContinue returned.");
             //DBG("\tDecoding continued...");
         }
         if (!decodingIsPaused)
@@ -525,8 +528,10 @@ void FFmpegMediaDecodeThread::pauseDecoding()
         if ( !decodingIsPaused )
         {
             waitForDecodingToPause.reset();
-//            DBG("Wait for decoding thread to pause...");
+            // TODO: Debug for pi.
+            DBG("waitForDecodingToPause waiting...");
             waitForDecodingToPause.wait(-1);
+            DBG("waitForDecodingToPause returned.");
         }
     }
 }
@@ -583,7 +588,10 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
             
             //let thread run for a while to see if data arrives
             waitForFirstData.reset();
+            // TODO: Debug for Pi.
+            DBG("waitForFirstData waiting...");
             waitForFirstData.wait(-1);
+            DBG("waitForFirstData returned.");
         }
         
         //pause the decoding process safely, so it can finish the current decoding cycle
@@ -621,7 +629,10 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
         
         //wait for data
         waitUntilBuffersAreFullEnough.reset();
+        // TODO: Debug for pi.
+        DBG("waitUntilBuffersAreFullEnough waiting...");
         waitUntilBuffersAreFullEnough.wait(-1);
+        DBG("waitUntilBuffersAreFullEnough returned.");
 
 //        if(!endOfFileReached)
 //        {
