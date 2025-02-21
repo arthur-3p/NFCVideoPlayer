@@ -4,3 +4,6 @@ JuceLibraryCode/
 script_log.txt
 ffmpeg-5.1.2/
 osx_arm/
+rpi/
+FFmpeg/
+ffmpeg-libraries/
