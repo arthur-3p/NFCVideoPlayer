@@ -352,7 +352,7 @@ void FFmpegVideoComponent::videoFileChanged (const juce::File& video)
         //TODO: this should not be necessary, because transportSource->setSource(...) already calls
         //setPlayPosition(0.0), but for some reason, the first attempt to set the position results in
         //audio playback being ahead of image data.
-        setPlayPosition(0.0);
+//        setPlayPosition(0.0);
     }
     else
     {
