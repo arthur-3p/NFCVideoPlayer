@@ -9,15 +9,10 @@
 */
 
 #include "VideoHolder.h"
+#include "../MainComponent.h"
 
-VideoHolder::VideoHolder()
+VideoHolder::VideoHolder(MainComponent& mc) : mainComp(mc)
 {
-    loadVideos();
-    
-    for (auto* v : videos)
-        addChildComponent(v);
-    
-//    resumeLoop();
 }
 
 void VideoHolder::resized()
@@ -44,6 +39,7 @@ Video* VideoHolder::UIDtoVideo(juce::String UID)
     
     if (UID == "fallback")  // We can't find fallback video... Uh oh.
     {
+        mainComp.showError("Missing video called \"fallback\"", false);
         jassertfalse;
         return nullptr;
     }
@@ -62,18 +58,31 @@ void VideoHolder::loadVideos()
     juce::File videoFolder = desktop.getChildFile("NFCVideos");
     int flag = juce::File::TypesOfFileToFind::findFiles;
     auto childFiles = videoFolder.findChildFiles(flag, false);
+    
+    // remove hidden files.
+    for (auto& file : childFiles)
+    {
+        if (file.isHidden())
+            childFiles.remove(&file);
+    }
 
     // At least 2 videos needed in the videos folder
-    jassert(childFiles.size() >= 2);
+    if (childFiles.size() < 2)
+    {
+        mainComp.showError("At least 2 videos need to be in a folder called \"NFCVideos\"", true);
+        jassertfalse;
+    }
 
     for (auto f : childFiles)
-    {
-        if (f.isHidden())
-            continue;
-        
+    {        
         videos.add(new Video(f));
         videos.getLast()->addChangeListener(this);
     }
+    
+    for (auto* v : videos)
+        addChildComponent(v);
+    
+    resized();
 }
 
 void VideoHolder::setTagUID(juce::String UID)
@@ -86,10 +95,10 @@ void VideoHolder::setTagUID(juce::String UID)
     
     Video* video = UIDtoVideo(UID);
     
-    if (video == currentVideo)
+    if (video == nullptr)
         return;
     
-    if (video == nullptr)
+    if (video == currentVideo)
         return;
     
     if(currentVideo)

@@ -25,17 +25,24 @@ public:
     
     //==============================================================================
     void timerCallback() override;
+    
+    void showError(juce::String, bool isCritical);
 
 private:
-    char openDevice();
+    int openDevice();
     serialib serial;
-//    juce::String currentSerialDevice{""};
-    void updateSelectedSerialDevice();
-//    std::unique_ptr<SerialDevice> serialDevice;
     void readSerial(juce::String& readerName, juce::String& UID);
     
     VideoHolder videoHolder;
     ReaderInfoDisplay readerInfoDisplay;
+    
+    juce::Label errorLabel;
+    bool showingError = false;
+    int showErrorCounter = 0;
+    bool errorIsCritical = false;
+    
+    juce::String serialOpenErrorMessage(int errorCode);
+    juce::String serialReadErrorMessage(int errorCode);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

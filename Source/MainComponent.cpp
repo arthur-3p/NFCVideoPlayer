@@ -15,17 +15,21 @@
 
 
 //==============================================================================
-MainComponent::MainComponent()
+MainComponent::MainComponent() : videoHolder(*this)
 {
+    errorLabel.setJustificationType(juce::Justification::centred);
+    addChildComponent(errorLabel);
+    
+    videoHolder.loadVideos();
     addAndMakeVisible(videoHolder);
     addChildComponent(readerInfoDisplay);
+    
     setWantsKeyboardFocus(true);
     
-    char openingErrorCode = openDevice();
-    
+    int openingErrorCode = openDevice();
     if (openingErrorCode != 1)
     {
-        DBG("Failure opening device. Error: " << juce::String(openingErrorCode));
+        showError("Failure opening device. Error: " + serialOpenErrorMessage(openingErrorCode), true);
     }
     
     startTimer(100);
@@ -38,11 +42,12 @@ MainComponent::~MainComponent()
     serial.closeDevice();
 }
 
-char MainComponent::openDevice()
+int MainComponent::openDevice()
 {
     // Connection to serial port
     // If connection fails, return the error code otherwise
-    return serial.openDevice(SERIAL_PORT, 9600);
+    char response = serial.openDevice(SERIAL_PORT, 9600);
+    return (int) response;
 }
 
 //==============================================================================
@@ -59,6 +64,8 @@ void MainComponent::resized()
         readerInfoDisplay.setBounds(bounds.removeFromTop(40));
     
     videoHolder.setBounds(bounds);
+    
+    errorLabel.setBounds(bounds);
 
 }
 
@@ -84,6 +91,25 @@ void MainComponent::timerCallback()
     readSerial(readerName, UID);
 
     readerInfoDisplay.updateInfo(readerName, UID);
+    
+    if (showingError)
+    {
+        errorLabel.setVisible(true);
+        
+        if (errorIsCritical)
+        {
+            // do nothing.
+        }
+        else if (showErrorCounter < 100)
+        {
+            showErrorCounter++;
+        }
+        else
+        {
+            errorLabel.setVisible(false);
+            showingError = false;
+        }
+    }
 }
 
 //==============================================================================
@@ -101,28 +127,61 @@ void MainComponent::readSerial(juce::String& readerName, juce::String& UID)
     int readError = serial.readString(buffer, '\r', 9, 1);
     if (readError > 0 )
     {
-        UID = juce::String(buffer);
-        DBG(UID);
-        
+        UID = juce::String(buffer);        
         videoHolder.setTagUID(UID);
     }
     else if (readError == 0)
         return;  // do nothing
     else
-        DBG("Error Reading. Error code: " << readError);
+        showError("Error Reading. Error code: " + juce::String(readError), false);
 }
 
-void MainComponent::updateSelectedSerialDevice()
+void MainComponent::showError(juce::String error, bool isCritical)
 {
-//    juce::StringArray devices = serialPortListMonitor.getSerialPortList().getAllValues();
-//    
-//    if (devices.contains(BOARD_NAME) && currentSerialDevice.compare(BOARD_NAME))
-//    {
-//        currentSerialDevice = BOARD_NAME;
-//        serialDevice = std::make_unique<SerialDevice>(currentSerialDevice);
-//    }
-//    else
-//    {
-//        currentSerialDevice.clear();
-//    }
+    errorLabel.setText("Error: "+error, juce::dontSendNotification);
+    showingError = true;
+    showErrorCounter = 0;
+    errorIsCritical = isCritical;
+}
+
+juce::String MainComponent::serialOpenErrorMessage(int errorCode)
+{
+    switch (errorCode) {
+        case -1:
+            return "device not found";
+        case -2:
+            return "error while opening the device";
+        case -3:
+            return "error while getting port parameters";
+        case -4:
+            return "Speed (Bauds) not recognized";
+        case -5:
+            return "error while writing port parameters";
+        case -6:
+            return "error while writing timeout parameters";
+        case -7:
+            return "Databits not recognized";
+        case -8:
+            return "Stopbits not recognized";
+        case -9:
+            return "Parity not recognized";
+        default:
+            return "Unknown Error Code.";
+    }
+}
+
+juce::String MainComponent::serialReadErrorMessage(int errorCode)
+{
+    switch (errorCode) {
+        case 0 :
+            return "timeout is reached";
+        case -1 :
+            return "error while setting the Timeout";
+        case -2 :
+            return "error while reading the character";
+        case -3 :
+            return "MaxNbBytes is reached";
+        default:
+            return "Unknown Error Code.";
+    }
 }

@@ -13,12 +13,16 @@
 #include <JuceHeader.h>
 #include "Video.h"
 
+class MainComponent;
+
 class VideoHolder
 : public juce::Component
 , public juce::ChangeListener
 {
 public:
-    VideoHolder();
+    VideoHolder(MainComponent& mc);
+    
+    void loadVideos();
     
     void resized() override;
     
@@ -27,7 +31,8 @@ public:
     void changeListenerCallback(juce::ChangeBroadcaster *source) override;
     
 private:
-    void loadVideos();
+    MainComponent& mainComp;
+    
     void stopVideosPlaying();
     void hideVideos();
     Video* UIDtoVideo(juce::String UID);

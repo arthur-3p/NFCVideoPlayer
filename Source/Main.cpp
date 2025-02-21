@@ -75,7 +75,7 @@ public:
            #endif
             
             juce::Desktop::getInstance().setScreenSaverEnabled(false);
-            juce::ResizableWindow::setFullScreen(true);
+            juce::ResizableWindow::setFullScreen(true);  // Launch in fullscreen.
 
             setVisible (true);
         }
