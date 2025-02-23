@@ -23,6 +23,10 @@ MainComponent::MainComponent() : videoHolder(*this)
     videoHolder.loadVideos();
     addAndMakeVisible(videoHolder);
     addChildComponent(readerInfoDisplay);
+
+    quitButton.setButtonText("Quit");
+    quitButton.onClick = [] { juce::JUCEApplicationBase::getInstance()->quit(); };
+    addAndMakeVisible(quitButton);
     
     setWantsKeyboardFocus(true);
     
@@ -66,6 +70,8 @@ void MainComponent::resized()
     videoHolder.setBounds(bounds);
     
     errorLabel.setBounds(bounds);
+    
+    quitButton.setBounds(bounds.removeFromTop(20).removeFromLeft(30));
 
 }
 

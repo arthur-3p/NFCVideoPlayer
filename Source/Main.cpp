@@ -55,37 +55,23 @@ public:
         This class implements the desktop window that contains an instance of
         our MainComponent class.
     */
-    class MainWindow    : public juce::DocumentWindow
+    class MainWindow
     {
     public:
         MainWindow (juce::String name)
-            : DocumentWindow (name,
-                              juce::Desktop::getInstance().getDefaultLookAndFeel()
-                                                          .findColour (juce::ResizableWindow::backgroundColourId),
-                              DocumentWindow::allButtons)
         {
-            setUsingNativeTitleBar (true);
-            setContentOwned (new MainComponent(), true);
-
-           #if JUCE_IOS || JUCE_ANDROID
-            setFullScreen (true);
-           #else
-            setResizable (true, true);
-            centreWithSize (getWidth(), getHeight());
-           #endif
+            mMainComponent = new MainComponent();
+            mMainComponent->setVisible(true);
+            mMainComponent->addToDesktop(juce::ComponentPeer::StyleFlags::windowHasDropShadow);
             
-            juce::Desktop::getInstance().setScreenSaverEnabled(false);
-            juce::ResizableWindow::setFullScreen(true);  // Launch in fullscreen.
-
-            setVisible (true);
+//            juce::Desktop::getInstance().setScreenSaverEnabled(false);
+            
+            juce::Desktop::getInstance().setKioskModeComponent(mMainComponent, false);
         }
-
-        void closeButtonPressed() override
+        
+        ~MainWindow()
         {
-            // This is called when the user tries to close this window. Here, we'll just
-            // ask the app to quit when this happens, but you can change this to do
-            // whatever you need.
-            JUCEApplication::getInstance()->systemRequestedQuit();
+            delete mMainComponent;
         }
 
         /* Note: Be careful if you override any DocumentWindow methods - the base
@@ -96,6 +82,8 @@ public:
         */
 
     private:
+        juce::Component* mMainComponent;
+        
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
     };
 

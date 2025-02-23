@@ -44,6 +44,8 @@ private:
     juce::String serialOpenErrorMessage(int errorCode);
     juce::String serialReadErrorMessage(int errorCode);
     
+    juce::TextButton quitButton;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
 
