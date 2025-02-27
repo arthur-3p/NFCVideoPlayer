@@ -64,8 +64,7 @@ public:
             mMainComponent->setVisible(true);
             mMainComponent->addToDesktop(juce::ComponentPeer::StyleFlags::windowHasDropShadow);
             
-//            juce::Desktop::getInstance().setScreenSaverEnabled(false);
-            
+            juce::Desktop::getInstance().setScreenSaverEnabled(false);
             juce::Desktop::getInstance().setKioskModeComponent(mMainComponent, false);
         }
         

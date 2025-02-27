@@ -15,6 +15,11 @@ VideoHolder::VideoHolder(MainComponent& mc) : mainComp(mc)
 {
 }
 
+VideoHolder::~VideoHolder()
+{
+    currentVideo = nullptr;
+}
+
 void VideoHolder::resized()
 {
     auto bounds = getLocalBounds();

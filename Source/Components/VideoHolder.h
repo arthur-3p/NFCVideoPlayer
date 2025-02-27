@@ -21,6 +21,7 @@ class VideoHolder
 {
 public:
     VideoHolder(MainComponent& mc);
+    ~VideoHolder();
     
     void loadVideos();
     

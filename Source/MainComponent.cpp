@@ -10,7 +10,7 @@
     #define SERIAL_PORT "/dev/ttyACM0"
 #endif
 #if defined JUCE_MAC
-    #define SERIAL_PORT "/dev/tty.usbmodem101"
+    #define SERIAL_PORT "/dev/tty.usbmodem1101"
 #endif
 
 
@@ -96,7 +96,7 @@ void MainComponent::timerCallback()
     
     readSerial(readerName, UID);
 
-    readerInfoDisplay.updateInfo(readerName, UID);
+//    readerInfoDisplay.updateInfo(readerName, UID);
     
     if (showingError)
     {
@@ -124,22 +124,23 @@ void MainComponent::readSerial(juce::String& readerName, juce::String& UID)
     if (!serial.isDeviceOpen())
         return;
     
-    char buffer[9] = "r";
+    char buffer[15] = "r";
 
     // Write the string on the serial device.
     serial.writeString(buffer);
 
     // Read string that arduino writes to serial in response.
-    int readError = serial.readString(buffer, '\r', 9, 1);
+    int readError = serial.readString(buffer, '\r', 15, 1);
     if (readError > 0 )
     {
-        UID = juce::String(buffer);        
-        videoHolder.setTagUID(UID);
+        UID = juce::String(buffer);
+        readerInfoDisplay.updateInfo(readerName, UID);
+//        videoHolder.setTagUID(UID);
     }
     else if (readError == 0)
         return;  // do nothing
     else
-        showError("Error Reading. Error code: " + juce::String(readError), false);
+        showError("Error Reading. Error code: " + serialReadErrorMessage(readError), false);
 }
 
 void MainComponent::showError(juce::String error, bool isCritical)
