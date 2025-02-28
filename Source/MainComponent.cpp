@@ -10,7 +10,7 @@
     #define SERIAL_PORT "/dev/ttyACM0"
 #endif
 #if defined JUCE_MAC
-    #define SERIAL_PORT "/dev/tty.usbmodem1101"
+    #define SERIAL_PORT "/dev/tty.usbmodem101"
 #endif
 
 
@@ -25,15 +25,24 @@ MainComponent::MainComponent() : videoHolder(*this)
     addChildComponent(readerInfoDisplay);
 
     quitButton.setButtonText("Quit");
-    quitButton.onClick = [] { juce::JUCEApplicationBase::getInstance()->quit(); };
+    quitButton.onClick = [this]
+    {
+        requestQuit();
+        juce::Thread::launch([this] { serial.closeDevice(); });
+    };
     addAndMakeVisible(quitButton);
+    
+    quitLabel.setText("Shutting Down...", juce::dontSendNotification);
+    quitLabel.setJustificationType(juce::Justification::centred);
+    quitLabel.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::grey.withAlpha(0.25f));
+    addChildComponent(quitLabel);
     
     setWantsKeyboardFocus(true);
     
     int openingErrorCode = openDevice();
     if (openingErrorCode != 1)
     {
-        showError("Failure opening device. Error: " + serialOpenErrorMessage(openingErrorCode), true);
+        updateErrorMessage("Failure opening device. Error: " + serialOpenErrorMessage(openingErrorCode), true);
     }
     
     startTimer(100);
@@ -43,7 +52,6 @@ MainComponent::MainComponent() : videoHolder(*this)
 
 MainComponent::~MainComponent()
 {
-    serial.closeDevice();
 }
 
 int MainComponent::openDevice()
@@ -68,11 +76,9 @@ void MainComponent::resized()
         readerInfoDisplay.setBounds(bounds.removeFromTop(40));
     
     videoHolder.setBounds(bounds);
-    
     errorLabel.setBounds(bounds);
-    
+    quitLabel.setBounds(bounds);
     quitButton.setBounds(bounds.removeFromTop(20).removeFromLeft(30));
-
 }
 
 //==============================================================================
@@ -95,26 +101,23 @@ void MainComponent::timerCallback()
     juce::String UID = "-";
     
     readSerial(readerName, UID);
-
-//    readerInfoDisplay.updateInfo(readerName, UID);
     
-    if (showingError)
+    if (errorIsCritical)
     {
-        errorLabel.setVisible(true);
-        
-        if (errorIsCritical)
-        {
-            // do nothing.
-        }
-        else if (showErrorCounter < 100)
-        {
-            showErrorCounter++;
-        }
-        else
-        {
-            errorLabel.setVisible(false);
-            showingError = false;
-        }
+    }
+    else if (showErrorCounter > 0)
+    {
+        showErrorCounter--;
+    }
+    else if (showErrorCounter == 0)
+    {
+        showErrorMessage(false);
+        showErrorCounter--;
+    }
+    
+    if (quitRequested && !serial.isDeviceOpen())
+    {
+        juce::JUCEApplicationBase::getInstance()->systemRequestedQuit();
     }
 }
 
@@ -135,19 +138,23 @@ void MainComponent::readSerial(juce::String& readerName, juce::String& UID)
     {
         UID = juce::String(buffer);
         readerInfoDisplay.updateInfo(readerName, UID);
-//        videoHolder.setTagUID(UID);
+        videoHolder.setTagUID(UID);
     }
     else if (readError == 0)
+    {
         return;  // do nothing
+    }
     else
-        showError("Error Reading. Error code: " + serialReadErrorMessage(readError), false);
+    {
+        updateErrorMessage("Error Reading. Error code: " + serialReadErrorMessage(readError), false);
+    }
 }
 
-void MainComponent::showError(juce::String error, bool isCritical)
+void MainComponent::updateErrorMessage(juce::String error, bool isCritical)
 {
     errorLabel.setText("Error: "+error, juce::dontSendNotification);
-    showingError = true;
-    showErrorCounter = 0;
+    showErrorMessage(true);
+    showErrorCounter = 100;
     errorIsCritical = isCritical;
 }
 

@@ -26,7 +26,7 @@ public:
     //==============================================================================
     void timerCallback() override;
     
-    void showError(juce::String, bool isCritical);
+    void updateErrorMessage(juce::String, bool isCritical);
 
 private:
     int openDevice();
@@ -37,7 +37,6 @@ private:
     ReaderInfoDisplay readerInfoDisplay;
     
     juce::Label errorLabel;
-    bool showingError = false;
     int showErrorCounter = 0;
     bool errorIsCritical = false;
     
@@ -45,6 +44,22 @@ private:
     juce::String serialReadErrorMessage(int errorCode);
     
     juce::TextButton quitButton;
+    juce::Label quitLabel;
+    
+    bool quitRequested = false;
+    
+    void requestQuit()
+    {
+        showErrorMessage(false);
+        
+        quitRequested = true;
+        quitLabel.setVisible(true);
+    }
+    
+    void showErrorMessage(bool show)
+    {
+        errorLabel.setVisible(show);
+    }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

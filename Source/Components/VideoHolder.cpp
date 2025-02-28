@@ -44,7 +44,7 @@ Video* VideoHolder::UIDtoVideo(juce::String UID)
     
     if (UID == "fallback")  // We can't find fallback video... Uh oh.
     {
-        mainComp.showError("Missing video called \"fallback\"", false);
+        mainComp.updateErrorMessage("Missing video called \"fallback\"", false);
         jassertfalse;
         return nullptr;
     }
@@ -74,7 +74,7 @@ void VideoHolder::loadVideos()
     // At least 2 videos needed in the videos folder
     if (childFiles.size() < 2)
     {
-        mainComp.showError("At least 2 videos need to be in a folder called \"NFCVideos\"", true);
+        mainComp.updateErrorMessage("At least 2 videos need to be in a folder called \"NFCVideos\"", true);
         jassertfalse;
     }
 
