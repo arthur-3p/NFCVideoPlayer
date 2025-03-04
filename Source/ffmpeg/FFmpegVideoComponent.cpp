@@ -254,7 +254,7 @@ void FFmpegVideoComponent::play()
             if (juce::MessageManager::getInstance()->isThisTheMessageThread())
                 onPlaybackStarted();
             else
-                juce::MessageManager::callAsync(std::move(onPlaybackStarted));
+                juce::MessageManager::callAsync([this] {onPlaybackStopped(); });
         }
     }
 }
@@ -391,9 +391,15 @@ void FFmpegVideoComponent::videoEnded()
     if (onPlaybackStopped != nullptr )
     {
         if (juce::MessageManager::getInstance()->isThisTheMessageThread())
+        {
+            DBG("on Message Thread");
             onPlaybackStopped();
+        }
         else
-            juce::MessageManager::callAsync(std::move(onPlaybackStopped));
+        {
+            DBG("not Message Thread");
+            juce::MessageManager::callAsync([this] {onPlaybackStopped(); });
+        }
     }
 }
 
