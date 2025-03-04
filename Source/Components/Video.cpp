@@ -49,9 +49,9 @@ void Video::stopAndHide()
 
 void Video::playbackStopped()
 {
-    if (loop && isVisible())
+    if (loop)
     {
-        videoComponent.closeVideo();
+        stopAndHide();
         startAndMakeVisible();
     }
     else

@@ -17,9 +17,6 @@
 //==============================================================================
 MainComponent::MainComponent() : videoHolder(*this)
 {
-    errorLabel.setJustificationType(juce::Justification::centred);
-    addChildComponent(errorLabel);
-    
     videoHolder.loadVideos();
     addAndMakeVisible(videoHolder);
     addChildComponent(readerInfoDisplay);
@@ -31,6 +28,9 @@ MainComponent::MainComponent() : videoHolder(*this)
         juce::Thread::launch([this] { serial.closeDevice(); });
     };
     addAndMakeVisible(quitButton);
+    
+    errorLabel.setJustificationType(juce::Justification::centred);
+    addChildComponent(errorLabel);
     
     quitLabel.setText("Shutting Down...", juce::dontSendNotification);
     quitLabel.setJustificationType(juce::Justification::centred);
