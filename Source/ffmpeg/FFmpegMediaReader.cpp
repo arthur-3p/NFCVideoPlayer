@@ -101,7 +101,7 @@ void FFmpegMediaReader::getNextAudioBlock (const juce::AudioSourceChannelInfo &b
     if(endOfFileReached && nextReadPos >= getTotalLength())
     {
         DBG("End at position: " + juce::String(static_cast<double>(nextReadPos) / static_cast<double>(getSampleRate())));
-//        videoListeners.call (&FFmpegVideoListener::videoEnded);
+        videoListeners.call (&FFmpegVideoListener::videoEnded);
     }
 }
 

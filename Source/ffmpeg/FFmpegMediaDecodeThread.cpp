@@ -693,7 +693,7 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
     if(endOfFileReached && newPositionSeconds >= getDuration())
     {
         DBG("End at position: " + juce::String(newPositionSeconds));
-        videoListeners.call (&FFmpegVideoListener::videoEnded);
+//        videoListeners.call (&FFmpegVideoListener::videoEnded);
     }
 }
 
