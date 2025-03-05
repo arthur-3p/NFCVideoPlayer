@@ -11,34 +11,31 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Video.h"
+#include "../ffmpeg/FFmpegVideoComponent.h"
 
-class MainComponent;
+class  MainComponent;
 
 class VideoHolder
 : public juce::Component
-, public juce::ChangeListener
 {
 public:
     VideoHolder(MainComponent& mc);
     ~VideoHolder();
     
-    void loadVideos();
-    
-    void resized() override;
-    
     void setTagUID(juce::String UID);
-    
-    void changeListenerCallback(juce::ChangeBroadcaster *source) override;
     
 private:
     MainComponent& mainComp;
     
-    void stopVideosPlaying();
-    void hideVideos();
-    Video* UIDtoVideo(juce::String UID);
-    void resumeLoop();
+    std::unique_ptr<FFmpegVideoComponent> currentVideo = nullptr;
+    juce::Array<juce::File> files;
+    juce::String currentUID;
     
-    juce::OwnedArray<Video> videos;
-    Video* currentVideo = nullptr;
+    void findFiles();
+    std::optional<juce::File> fileFromUID(juce::String UID);
+    void removeCurrentVideo();
+    void createNewVideo(juce::File file);
+    void createAndStartNewVideo(juce::String UID);
+    void resumeLoop();
+    void playbackStopped();
 };

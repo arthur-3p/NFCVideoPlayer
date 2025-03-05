@@ -17,10 +17,13 @@
 //==============================================================================
 MainComponent::MainComponent() : videoHolder(*this)
 {
-    videoHolder.loadVideos();
+//    videoHolder.loadFiles();
     addAndMakeVisible(videoHolder);
     addChildComponent(readerInfoDisplay);
-
+    
+    errorLabel.setJustificationType(juce::Justification::centred);
+    addChildComponent(errorLabel);
+    
     quitButton.setButtonText("Quit");
     quitButton.onClick = [this]
     {
@@ -28,9 +31,6 @@ MainComponent::MainComponent() : videoHolder(*this)
         juce::Thread::launch([this] { serial.closeDevice(); });
     };
     addAndMakeVisible(quitButton);
-    
-    errorLabel.setJustificationType(juce::Justification::centred);
-    addChildComponent(errorLabel);
     
     quitLabel.setText("Shutting Down...", juce::dontSendNotification);
     quitLabel.setJustificationType(juce::Justification::centred);

@@ -13,51 +13,27 @@
 
 VideoHolder::VideoHolder(MainComponent& mc) : mainComp(mc)
 {
+    findFiles();
 }
 
 VideoHolder::~VideoHolder()
 {
-    currentVideo = nullptr;
 }
 
-void VideoHolder::resized()
+void VideoHolder::setTagUID(juce::String UID)
 {
-    auto bounds = getLocalBounds();
+    if (UID == "-")
+        return;
     
-    for (auto* v : videos)
-        v->setBounds(bounds);
-}
-
-void VideoHolder::hideVideos()
-{
-    for (auto* v : videos)
-        v->stopAndHide();
-}
-
-Video* VideoHolder::UIDtoVideo(juce::String UID)
-{
-    for (auto* v : videos)
-    {
-        if(v->UID == UID)
-            return v;
-    }
+    if (currentVideo &&
+        UID == currentUID &&
+        UID != "loop")
+        return;
     
-    if (UID == "fallback")  // We can't find fallback video... Uh oh.
-    {
-        mainComp.updateErrorMessage("Missing video called \"fallback\"", false);
-        jassertfalse;
-        return nullptr;
-    }
-    else  // returning fallback video
-        return UIDtoVideo("fallback");
+    createAndStartNewVideo(UID);
 }
 
-void VideoHolder::resumeLoop()
-{
-    setTagUID("loop");
-}
-
-void VideoHolder::loadVideos()
+void VideoHolder::findFiles()
 {
     juce::File desktop = juce::File::getSpecialLocation(juce::File::SpecialLocationType::userDesktopDirectory);
     juce::File videoFolder = desktop.getChildFile("NFCVideos");
@@ -79,56 +55,67 @@ void VideoHolder::loadVideos()
     }
 
     for (auto f : childFiles)
-    {        
-        videos.add(new Video(f));
-        videos.getLast()->addChangeListener(this);
-    }
-    
-    for (auto* v : videos)
-        addChildComponent(v);
-    
-    resized();
-}
-
-void VideoHolder::setTagUID(juce::String UID)
-{
-    if (UID == "-")
-        return;
-    
-    if (currentVideo && UID == currentVideo->UID)
-        return;
-    
-    Video* video = UIDtoVideo(UID);
-    
-    if (video == nullptr)
-        return;
-    
-    if (video == currentVideo)
-        return;
-    
-    if(currentVideo)
-        currentVideo->stopAndHide();
-    
-    video->startAndMakeVisible();
-    
-    currentVideo = video;
-}
-
-void VideoHolder::changeListenerCallback(juce::ChangeBroadcaster *source)
-{
-    // Receiving this from a video that has finished, and is not looped.
-    Video* video = dynamic_cast<Video*>(source);
-    if (video)
     {
-        // Video is the current video, and it's finished. Resume looped video
-        if (video == currentVideo)
-        {
-            if (currentVideo)
-                currentVideo->stopAndHide();
-            
-            resumeLoop();
-        }
+        files.add(f);
+    }
+}
+
+std::optional<juce::File> VideoHolder::fileFromUID(juce::String UID)
+{
+    for (auto f : files)
+    {
+        if(f.getFileNameWithoutExtension() == UID)
+            return f;
+    }
+    
+    if (UID == "fallback")  // We can't find fallback video... Uh oh.
+    {
+        mainComp.updateErrorMessage("Missing video called \"fallback\"", false);
+        jassertfalse;
+        return std::nullopt;
+    }
+    else
+    {
+        // returning fallback video
+        return fileFromUID("fallback");
     }
     
 }
 
+void VideoHolder::removeCurrentVideo()
+{
+    if (currentVideo)
+        removeChildComponent(currentVideo.get());
+}
+
+void VideoHolder::createNewVideo(juce::File file)
+{
+    currentVideo.reset(new FFmpegVideoComponent);
+    currentVideo->setBounds(getLocalBounds());
+    addAndMakeVisible(currentVideo.get());
+    
+    currentVideo->onPlaybackStopped = [this] { playbackStopped(); };
+    currentVideo->load(file);
+}
+
+void VideoHolder::createAndStartNewVideo(juce::String UID)
+{
+    std::optional<juce::File> file = fileFromUID(UID);
+    if (file.has_value())
+    {
+        removeCurrentVideo();
+        createNewVideo(file.value());
+        currentVideo->play();
+        currentUID = UID;
+    }
+}
+
+void VideoHolder::resumeLoop()
+{
+    setTagUID("loop");
+}
+
+void VideoHolder::playbackStopped()
+{
+    resumeLoop();
+}
