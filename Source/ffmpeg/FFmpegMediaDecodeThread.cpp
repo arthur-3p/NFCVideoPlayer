@@ -233,10 +233,7 @@ void FFmpegMediaDecodeThread::run()
             //wait until continue signal
             //DBG("Wait until thread is continued...");
             waitUntilContinue.reset();
-            // TODO: debug for pi.
-            DBG("WaitUntilContinue waiting...");
             waitUntilContinue.wait(-1);
-            DBG("WaitUntilContinue returned.");
             //DBG("\tDecoding continued...");
         }
         if (!decodingIsPaused)
@@ -439,7 +436,7 @@ int FFmpegMediaDecodeThread::decodeAudioPacket (AVPacket* packet)
                     numSamples,
                     (const uint8_t**)audioFrame->extended_data,
                     numSamples);
-        audioFifo.addToFifo (audioConvertBuffer);
+//        audioFifo.addToFifo (audioConvertBuffer);
     }
     
     return numOutputSamples;
@@ -528,10 +525,8 @@ void FFmpegMediaDecodeThread::pauseDecoding()
         if ( !decodingIsPaused )
         {
             waitForDecodingToPause.reset();
-            // TODO: Debug for pi.
-            DBG("waitForDecodingToPause waiting...");
+//            DBG("Wait for decoding thread to pause...");
             waitForDecodingToPause.wait(-1);
-            DBG("waitForDecodingToPause returned.");
         }
     }
 }
@@ -588,10 +583,7 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
             
             //let thread run for a while to see if data arrives
             waitForFirstData.reset();
-            // TODO: Debug for Pi.
-            DBG("waitForFirstData waiting...");
             waitForFirstData.wait(-1);
-            DBG("waitForFirstData returned.");
         }
         
         //pause the decoding process safely, so it can finish the current decoding cycle
@@ -629,10 +621,7 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
         
         //wait for data
         waitUntilBuffersAreFullEnough.reset();
-        // TODO: Debug for pi.
-        DBG("waitUntilBuffersAreFullEnough waiting...");
         waitUntilBuffersAreFullEnough.wait(-1);
-        DBG("waitUntilBuffersAreFullEnough returned.");
 
 //        if(!endOfFileReached)
 //        {
@@ -690,11 +679,11 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
     }
 
     //if the decoding method has reached the end of file and if the last frame has been displayed
-    if(endOfFileReached && newPositionSeconds >= getDuration())
-    {
-        DBG("End at position: " + juce::String(newPositionSeconds));
+//    if(endOfFileReached && newPositionSeconds >= getDuration())
+//    {
+//        DBG("End at position: " + juce::String(newPositionSeconds));
 //        videoListeners.call (&FFmpegVideoListener::videoEnded);
-    }
+//    }
 }
 
 double FFmpegMediaDecodeThread::getCurrentPositionSeconds () const

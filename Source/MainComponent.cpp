@@ -10,7 +10,7 @@
     #define SERIAL_PORT "/dev/ttyACM0"
 #endif
 #if defined JUCE_MAC
-    #define SERIAL_PORT "/dev/tty.usbmodem101"
+    #define SERIAL_PORT "/dev/tty.usbmodem1101"
 #endif
 
 

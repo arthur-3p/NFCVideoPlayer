@@ -40,8 +40,6 @@
               file="Source/Components/ReaderInfoDisplay.cpp"/>
         <FILE id="YA712m" name="ReaderInfoDisplay.h" compile="0" resource="0"
               file="Source/Components/ReaderInfoDisplay.h"/>
-        <FILE id="bamt19" name="Video.cpp" compile="1" resource="0" file="Source/Components/Video.cpp"/>
-        <FILE id="wDqN4r" name="Video.h" compile="0" resource="0" file="Source/Components/Video.h"/>
         <FILE id="P8hjNt" name="VideoHolder.cpp" compile="1" resource="0" file="Source/Components/VideoHolder.cpp"/>
         <FILE id="gMp70K" name="VideoHolder.h" compile="0" resource="0" file="Source/Components/VideoHolder.h"/>
       </GROUP>

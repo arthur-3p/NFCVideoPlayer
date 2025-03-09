@@ -1,6 +1,5 @@
 #include <JuceHeader.h>
 #include "FFmpegVideoComponent.h"
-//#include "../cb_strings/StringHelper.h"
 
 #define AUDIO_BUFFER_SIZE 192000        // 4 seconds at 48kHz
 #define VIDEO_FRAME_BUFFER_SIZE  102    // a bit more as 4 seconds at 25 FPS
@@ -54,22 +53,23 @@ FFmpegVideoComponent::~FFmpegVideoComponent()
 void FFmpegVideoComponent::paint (juce::Graphics& g)
 {
     //convert video frame to image and paint it
-    g.fillAll (juce::Colours::white);
+    g.fillAll (juce::Colours::black);
+    g.setColour(juce::Colours::white);
     if ( !videoReader )
     {
-        DBG("FFMpegVideoComponent: Video Reader not initialized.");
+        g.drawFittedText ("FFMpegVideoComponent: Video Reader not initialized.", getLocalBounds(), juce::Justification::centred, 1);
     }
     else if ( !videoReader->isMediaOpen() )
     {
-        DBG("FFMpegVideoComponent: No Video loaded");
+        g.drawFittedText ("FFMpegVideoComponent: No Video loaded", getLocalBounds(), juce::Justification::centred, 1);
     }
     else if( !currentAVFrame )
     {
-        DBG("FFMpegVideoComponent: No frame loaded to display.");
+        g.drawFittedText ("FFMpegVideoComponent: No frame loaded to display.", getLocalBounds(), juce::Justification::centred, 1);
     }
     else if ( !currentFrameAsImage.isValid() )
     {
-        DBG("FFMpegVideoComponent: Current image is not valid.");
+        g.drawFittedText ("FFMpegVideoComponent: Current image is not valid.", getLocalBounds(), juce::Justification::centred, 1);
     }
     else
     {
@@ -243,7 +243,6 @@ double FFmpegVideoComponent::getPlaySpeed() const
 
 void FFmpegVideoComponent::play()
 {
-//    DBG("FFMpegVideoComponent::play() at " + StringHelper::convertSecondsToTimeString(getPlayPosition()));
     if ( isPaused && !isPlaying())
     {
         transportSource->start();
@@ -287,7 +286,6 @@ double FFmpegVideoComponent::getPlayPosition() const
 
 void FFmpegVideoComponent::stop()
 {
-//    DBG("FFMpegVideoComponent::stop() at " + StringHelper::convertSecondsToTimeString(getPlayPosition()));
     if ( isPlaying() && !isPaused && isVideoOpen())
     {
         transportSource->stop();
@@ -352,7 +350,7 @@ void FFmpegVideoComponent::videoFileChanged (const juce::File& video)
         //TODO: this should not be necessary, because transportSource->setSource(...) already calls
         //setPlayPosition(0.0), but for some reason, the first attempt to set the position results in
         //audio playback being ahead of image data.
-//        setPlayPosition(0.0);
+        setPlayPosition(0.0);
     }
     else
     {
@@ -375,7 +373,7 @@ void FFmpegVideoComponent::displayNewFrame (const AVFrame* frame)
     }
     else
     {
-//        DBG ("FFMpegVideoComponent: Frame not updated yet: " + juce::String (frameSeconds) + " sec");
+        DBG ("FFMpegVideoComponent: Frame not updated yet: " + juce::String (frameSeconds) + " sec");
     }
 }
 
@@ -391,15 +389,9 @@ void FFmpegVideoComponent::videoEnded()
     if (onPlaybackStopped != nullptr )
     {
         if (juce::MessageManager::getInstance()->isThisTheMessageThread())
-        {
-            DBG("on Message Thread");
             onPlaybackStopped();
-        }
         else
-        {
-            DBG("not Message Thread");
             juce::MessageManager::callAsync(std::move(onPlaybackStopped));
-        }
     }
 }
 
