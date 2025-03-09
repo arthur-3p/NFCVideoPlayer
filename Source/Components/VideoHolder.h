@@ -39,4 +39,5 @@ private:
     void resumeLoop();
     void playbackStopped();
     void errorOccured(juce::String);
+    void videoAborted();
 };

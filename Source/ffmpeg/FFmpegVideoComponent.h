@@ -130,6 +130,7 @@ public:
     std::function< void()> 	onPlaybackStarted;
     std::function< void()> 	onPlaybackStopped; 
     std::function< void(const juce::String&)> 	onErrorOccurred;
+    std::function< void()>  onVideoAborted;
 
     
 private:
@@ -159,6 +160,8 @@ private:
     bool isPaused = false;
     
     int defaultFramerate = 30;
+    
+    void abortVideo();
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FFmpegVideoComponent)
 };

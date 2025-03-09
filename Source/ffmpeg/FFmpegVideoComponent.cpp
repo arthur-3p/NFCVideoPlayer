@@ -398,6 +398,14 @@ void FFmpegVideoComponent::videoEnded()
 
 void FFmpegVideoComponent::errorOccured(juce::String errorText)
 {
-    DBG("FFmpegVideoComponent: errorOccured: " << errorText);
+    DBG("Video Component errorOccured()");
+    juce::MessageManager::callAsync([this] () { abortVideo(); });
     onErrorOccurred(errorText);
+}
+
+void FFmpegVideoComponent::abortVideo()
+{
+    DBG("Video Component abortVideo()");
+    closeVideo();
+    onVideoAborted();
 }

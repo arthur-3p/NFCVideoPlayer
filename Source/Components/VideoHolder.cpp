@@ -96,6 +96,7 @@ void VideoHolder::createNewVideo(juce::File file)
     
     currentVideo->onPlaybackStopped = [this] { playbackStopped(); };
     currentVideo->onErrorOccurred = [this] (juce::String errorText) { errorOccured(errorText); };
+    currentVideo->onVideoAborted = [this]  { videoAborted(); };
     currentVideo->load(file);
 }
 
@@ -125,5 +126,10 @@ void VideoHolder::errorOccured(juce::String errorString)
 {
     juce::MessageManager::callAsync([this, errorString] { mainComp.updateErrorMessage("VideoComponent Error: " + errorString, false); });
     DBG("errorOccured from video component...");
+}
+
+void VideoHolder::videoAborted()
+{
+    DBG("VideoHolder videoAborted");
     resumeLoop();
 }
