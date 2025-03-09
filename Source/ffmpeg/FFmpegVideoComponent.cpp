@@ -350,7 +350,8 @@ void FFmpegVideoComponent::videoFileChanged (const juce::File& video)
         //TODO: this should not be necessary, because transportSource->setSource(...) already calls
         //setPlayPosition(0.0), but for some reason, the first attempt to set the position results in
         //audio playback being ahead of image data.
-        setPlayPosition(0.0);
+        //TODO: Removing for now, to see if helps on pi.
+//        setPlayPosition(0.0);
     }
     else
     {
@@ -373,7 +374,7 @@ void FFmpegVideoComponent::displayNewFrame (const AVFrame* frame)
     }
     else
     {
-        DBG ("FFMpegVideoComponent: Frame not updated yet: " + juce::String (frameSeconds) + " sec");
+//        DBG ("FFMpegVideoComponent: Frame not updated yet: " + juce::String (frameSeconds) + " sec");
     }
 }
 

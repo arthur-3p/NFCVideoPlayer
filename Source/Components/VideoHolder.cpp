@@ -124,5 +124,6 @@ void VideoHolder::playbackStopped()
 void VideoHolder::errorOccured(juce::String errorString)
 {
     juce::MessageManager::callAsync([this, errorString] { mainComp.updateErrorMessage("VideoComponent Error: " + errorString, false); });
+    DBG("errorOccured from video component...");
     resumeLoop();
 }
