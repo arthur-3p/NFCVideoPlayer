@@ -395,3 +395,8 @@ void FFmpegVideoComponent::videoEnded()
     }
 }
 
+void FFmpegVideoComponent::errorOccured(juce::String errorText)
+{
+    DBG("FFmpegVideoComponent: errorOccured: " << errorText);
+    onErrorOccurred(errorText);
+}

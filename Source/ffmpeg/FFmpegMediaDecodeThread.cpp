@@ -226,15 +226,16 @@ void FFmpegMediaDecodeThread::run()
     {
         if (decodingShouldPause)
         {
-            //pause decoding and signal that it has stopped
-            //DBG("\tDecoding paused...");
             decodingIsPaused = true;
             waitForDecodingToPause.signal();
-            //wait until continue signal
-            //DBG("Wait until thread is continued...");
             waitUntilContinue.reset();
-            waitUntilContinue.wait(-1);
-            //DBG("\tDecoding continued...");
+         
+            bool success = waitUntilContinue.wait(200);
+            if (!success)
+            {
+                videoListeners.call (&FFmpegVideoListener::errorOccured, "waitUntilContinue wait timedout.");
+            }
+            
         }
         if (!decodingIsPaused)
         {
@@ -436,6 +437,7 @@ int FFmpegMediaDecodeThread::decodeAudioPacket (AVPacket* packet)
                     numSamples,
                     (const uint8_t**)audioFrame->extended_data,
                     numSamples);
+//        TODO: work out how to get the audio fifo not to overrun, or whatever is happening.
 //        audioFifo.addToFifo (audioConvertBuffer);
     }
     
@@ -525,8 +527,11 @@ void FFmpegMediaDecodeThread::pauseDecoding()
         if ( !decodingIsPaused )
         {
             waitForDecodingToPause.reset();
-//            DBG("Wait for decoding thread to pause...");
-            waitForDecodingToPause.wait(-1);
+            bool success = waitForDecodingToPause.wait(200);
+            if (!success)
+            {
+                videoListeners.call (&FFmpegVideoListener::errorOccured, "waitForDecodingToPause wait timedout.");
+            }
         }
     }
 }
@@ -583,7 +588,11 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
             
             //let thread run for a while to see if data arrives
             waitForFirstData.reset();
-            waitForFirstData.wait(-1);
+            bool success = waitForFirstData.wait(200);
+            if (!success)
+            {
+                videoListeners.call (&FFmpegVideoListener::errorOccured, "waitForFirstData wait timedout.");
+            }
         }
         
         //pause the decoding process safely, so it can finish the current decoding cycle
@@ -621,7 +630,11 @@ void FFmpegMediaDecodeThread::setPositionSeconds (const double newPositionSecond
         
         //wait for data
         waitUntilBuffersAreFullEnough.reset();
-        waitUntilBuffersAreFullEnough.wait(-1);
+        bool success = waitUntilBuffersAreFullEnough.wait(200);
+        if (!success)
+        {
+            videoListeners.call (&FFmpegVideoListener::errorOccured, "waitUntilBuffersAreFullEnough wait timedout.");
+        }
 
 //        if(!endOfFileReached)
 //        {

@@ -125,6 +125,7 @@ public:
     void positionSecondsChanged (const double pts) override;
     /** callback from video reader when playback has ended  */
     void videoEnded() override;
+    void errorOccured(juce::String errorText) override;
 
     std::function< void()> 	onPlaybackStarted;
     std::function< void()> 	onPlaybackStopped; 

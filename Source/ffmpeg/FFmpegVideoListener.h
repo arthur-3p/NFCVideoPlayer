@@ -67,4 +67,6 @@ public:
     
     /*! this gets called when the video has ended */
     virtual void videoEnded(){}
+    
+    virtual void errorOccured(juce::String error) {};
 };

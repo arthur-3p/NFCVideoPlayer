@@ -38,4 +38,5 @@ private:
     void createAndStartNewVideo(juce::String UID);
     void resumeLoop();
     void playbackStopped();
+    void errorOccured(juce::String);
 };
